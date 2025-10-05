@@ -16,33 +16,24 @@ const Page = () => {
       >
         🔙
       </button>
-      <Link
-        href="/loggedInAdmin/employee/addEmployee"
-        className="absolute right-0 top-0 bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-600"
-      >
-        Add Employee ➕
-      </Link>
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Employee name
+                Transaction ID
               </th>
               <th scope="col" className="px-6 py-3">
-                Employee ID
+                User ID
               </th>
               <th scope="col" className="px-6 py-3">
-                Designation
+                Txn Method
               </th>
               <th scope="col" className="px-6 py-3">
-                Location
+                Date and Time
               </th>
               <th scope="col" className="px-6 py-3">
-                Salary
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Office
+                Amount
               </th>
               <th scope="col" className="px-6 py-3">
                 Action
@@ -55,18 +46,20 @@ const Page = () => {
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                Asmot Hussain Khan
+                46711355846
               </th>
               <td className="px-6 py-4">52992025271</td>
-              <td className="px-6 py-4">General Manager</td>
-              <td className="px-6 py-4">Assam</td>
+              <td className="px-6 py-4">52992025271</td>
+              <td className="px-6 py-4">upi</td>
               <td className="px-6 py-4">
                 <span className="text-xl">₹</span>
                 {salary.toLocaleString("en-IN")}
               </td>
-              <td className="px-6 py-4">Head Office</td>
               <td className="px-6 py-4">
-                <Link href={`./employee/viewEmployee/myslag`} className="text-2xl">
+                <Link
+                  href={`/loggedInAdmin/investor/viewTrans/myslag`}
+                  className="text-2xl"
+                >
                   👁️
                 </Link>
               </td>

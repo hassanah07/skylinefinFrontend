@@ -1,7 +1,9 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const router = useRouter();
   const [f_name, setF_name] = useState("");
   const [l_name, setL_name] = useState("");
   const [aadhar_no, setAadhar_no] = useState("");
@@ -66,8 +68,16 @@ const Page = () => {
   };
   return (
     <div>
-      <form className="max-w-lg mx-auto">
-        <div className="grid md:grid-cols-2 md:gap-6">
+      <form className="max-w-lg mx-auto relative">
+        <button
+          className="absolute left-0 top-0 bg-blue-500 text-white px-4 py-2 rounded m-0 hover:bg-blue-600"
+          onClick={() => {
+            router.back();
+          }}
+        >
+          Back
+        </button>
+        <div className="grid pt-14 md:grid-cols-2 md:gap-6">
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="text"
@@ -309,8 +319,10 @@ const Page = () => {
                 setRole(e.target.value);
               }}
             >
-              <option selected>Choose a Employee Type</option>
-              {/* <option
+              <option className="dark:bg-black" defaultValue>
+                Choose a Employee Type
+              </option>
+              {/* <option className="dark:bg-black"
                 value="CEO"
                 onClick={() => {
                   setRole("CEO");
@@ -318,7 +330,7 @@ const Page = () => {
               >
                 CEO
               </option>
-              <option
+              <option className="dark:bg-black"
                 value="general manager"
                 onClick={() => {
                   setRole("general manager");
@@ -328,6 +340,7 @@ const Page = () => {
               </option> */}
 
               <option
+                className="dark:bg-black"
                 value="0"
                 onClick={() => {
                   setRole(0);
@@ -335,8 +348,18 @@ const Page = () => {
               >
                 Manager
               </option>
-              <option
+              {/* <option
+                className="dark:bg-black"
                 value="1"
+                onClick={() => {
+                  setRole(0);
+                }}
+              >
+                Assistant Manager
+              </option> */}
+              <option
+                className="dark:bg-black"
+                value="2"
                 onClick={() => {
                   setRole(1);
                 }}
@@ -344,12 +367,22 @@ const Page = () => {
                 Office Employee
               </option>
               <option
-                value="2"
+                className="dark:bg-black"
+                value="3"
                 onClick={() => {
                   setRole(2);
                 }}
               >
                 Field Employee
+              </option>
+              <option
+                className="dark:bg-black"
+                value="4"
+                onClick={() => {
+                  setRole(2);
+                }}
+              >
+                EMI Collector
               </option>
             </select>
           </div>

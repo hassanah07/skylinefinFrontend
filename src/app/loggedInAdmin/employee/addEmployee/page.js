@@ -348,9 +348,18 @@ const Page = () => {
               >
                 Manager
               </option>
-              <option
+              {/* <option
                 className="dark:bg-black"
                 value="1"
+                onClick={() => {
+                  setRole(0);
+                }}
+              >
+                Assistant Manager
+              </option> */}
+              <option
+                className="dark:bg-black"
+                value="2"
                 onClick={() => {
                   setRole(1);
                 }}
@@ -359,12 +368,21 @@ const Page = () => {
               </option>
               <option
                 className="dark:bg-black"
-                value="2"
+                value="3"
                 onClick={() => {
                   setRole(2);
                 }}
               >
                 Field Employee
+              </option>
+              <option
+                className="dark:bg-black"
+                value="4"
+                onClick={() => {
+                  setRole(2);
+                }}
+              >
+                EMI Collector
               </option>
             </select>
           </div>

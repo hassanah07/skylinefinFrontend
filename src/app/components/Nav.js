@@ -22,8 +22,8 @@ const Navigation = () => {
   }, [router.query]);
 
   const logout = () => {
+    localStorage.removeItem("token");
     redirect("../../");
-    //   localStorage.removeItem("token");
     //   setUser({ value: null });
     //   router.push("/login");
   };
@@ -68,7 +68,7 @@ const Navigation = () => {
                 <Link
                   href={currElen.link}
                   className="px-2"
-                  key={currElen.id}
+                  key={index}
                   onClick={() => {
                     setToggleNav(true);
                   }}

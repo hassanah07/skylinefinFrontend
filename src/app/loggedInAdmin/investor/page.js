@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 const Page = () => {
-  const salary = 250000;
+  const salary = 5500000;
   const router = useRouter();
   return (
     <div className="sm:rounded-lg w-2/3 mx-auto pt-16 relative">
@@ -17,32 +17,29 @@ const Page = () => {
         🔙
       </button>
       <Link
-        href="/loggedInAdmin/employee/addEmployee"
+        href="/loggedInAdmin/investor/addInvestor"
         className="absolute right-0 top-0 bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-600"
       >
-        Add Employee ➕
+        Add Investor ➕
       </Link>
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Employee name
+                name
               </th>
               <th scope="col" className="px-6 py-3">
-                Employee ID
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Designation
+                Customer ID No
               </th>
               <th scope="col" className="px-6 py-3">
                 Location
               </th>
               <th scope="col" className="px-6 py-3">
-                Salary
+                Investment Amount
               </th>
               <th scope="col" className="px-6 py-3">
-                Office
+                Address
               </th>
               <th scope="col" className="px-6 py-3">
                 Action
@@ -58,15 +55,17 @@ const Page = () => {
                 Asmot Hussain Khan
               </th>
               <td className="px-6 py-4">52992025271</td>
-              <td className="px-6 py-4">General Manager</td>
               <td className="px-6 py-4">Assam</td>
               <td className="px-6 py-4">
                 <span className="text-xl">₹</span>
                 {salary.toLocaleString("en-IN")}
               </td>
-              <td className="px-6 py-4">Head Office</td>
+              <td className="px-6 py-4">Barpeta Road</td>
               <td className="px-6 py-4">
-                <Link href={`./employee/viewEmployee/myslag`} className="text-2xl">
+                <Link
+                  href={`./investor/viewInvestor/myslag`}
+                  className="text-2xl"
+                >
                   👁️
                 </Link>
               </td>
