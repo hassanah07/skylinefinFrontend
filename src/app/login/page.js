@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { redirect, RedirectType, useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Link from "next/link";
 import { ModeToggle } from "@/components/ModeToggle";
 
 const Page = () => {
@@ -64,8 +63,9 @@ const Page = () => {
       <section className="text-black body-font relative md:w-[70%]">
         <div className="container px-5 mx-auto my-8 md:w-[50%] shadow-2xl shadow-popover-foreground">
           <div className="flex flex-col text-center w-full">
+            
             <h1 className="sm:text-4xl text-3xl font-extrabold title-font my-4 text-gray-700 dark:text-slate-100">
-              Skyline Admin Login
+              Hello Skylinee
             </h1>
           </div>
           <hr />
@@ -111,7 +111,9 @@ const Page = () => {
         </div>
       </section>
       <div className="absolute right-4 bottom-4">
+
         <ModeToggle />
+
       </div>
     </div>
   );

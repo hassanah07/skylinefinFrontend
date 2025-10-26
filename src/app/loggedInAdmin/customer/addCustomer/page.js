@@ -98,12 +98,12 @@ export default function LoanApplicationForm() {
       if (data.status === true) {
         toast.success(`${data.msg}`, toastOptions);
         setTimeout(() => {
-          router.push("/loggedInAdmin/loan");
+          router.push("/loggedInAdmin/customer");
         }, 4000);
       } else {
         toast.error(`${data.msg}`, toastOptions);
         setTimeout(() => {
-          router.push("/loggedInAdmin/loan");
+          router.push("/loggedInAdmin/customer");
         }, 4000);
       }
     } catch (error) {
@@ -121,7 +121,7 @@ export default function LoanApplicationForm() {
           <div className="max-w-3xl mx-auto">
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6">
               <h2 className="text-2xl font-bold uppercase text-center mb-8">
-                Loan Application Form
+                Loan User Form
               </h2>
 
               <form className="space-y-6">
@@ -272,7 +272,7 @@ export default function LoanApplicationForm() {
                       </label>
                       <input
                         type="text"
-                        className="mt-1 block w-full border-b-2 shadow-md focus:border-blue-500"
+                        className="mt-1 block w-full uppercase border-b-2 shadow-md focus:border-blue-500"
                         value={formData.gstNo}
                         onChange={(e) =>
                           setFormData({
@@ -289,7 +289,7 @@ export default function LoanApplicationForm() {
                     </label>
                     <input
                       type="text"
-                      className="mt-1 block w-full border-b-2 shadow-md focus:border-blue-500"
+                      className="mt-1 block w-full uppercase border-b-2 shadow-md focus:border-blue-500"
                       value={formData.fullName}
                       onChange={(e) =>
                         setFormData({
@@ -307,7 +307,7 @@ export default function LoanApplicationForm() {
                     </label>
                     <input
                       type="text"
-                      className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                      className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                       value={formData.fatherName}
                       onChange={(e) =>
                         setFormData({
@@ -324,7 +324,7 @@ export default function LoanApplicationForm() {
                     </label>
                     <input
                       type="text"
-                      className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                      className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                       value={formData.motherName}
                       onChange={(e) =>
                         setFormData({
@@ -341,7 +341,7 @@ export default function LoanApplicationForm() {
                     </label>
                     <input
                       type="text"
-                      className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                      className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                       value={formData.spouseName}
                       onChange={(e) =>
                         setFormData({
@@ -444,7 +444,7 @@ export default function LoanApplicationForm() {
                     <span className="flex">
                       <input
                         type="text"
-                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                         value={formData.passport}
                         onChange={(e) =>
                           setFormData({
@@ -474,7 +474,7 @@ export default function LoanApplicationForm() {
                     <span className="flex">
                       <input
                         type="text"
-                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                         value={formData.driving}
                         onChange={(e) =>
                           setFormData({
@@ -502,7 +502,7 @@ export default function LoanApplicationForm() {
                     <span className="flex">
                       <input
                         type="text"
-                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                         value={formData.pan}
                         onChange={(e) =>
                           setFormData({
@@ -522,7 +522,7 @@ export default function LoanApplicationForm() {
                     <span className="flex">
                       <input
                         type="number"
-                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                         value={formData.aadhar}
                         onChange={(e) =>
                           setFormData({
@@ -541,7 +541,7 @@ export default function LoanApplicationForm() {
                     <span className="flex">
                       <input
                         type="text"
-                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        className="mt-1 block w-full uppercase shadow-md focus:border-blue-500 border-b-2"
                         value={formData.voter}
                         onChange={(e) =>
                           setFormData({
@@ -558,7 +558,7 @@ export default function LoanApplicationForm() {
                     <span className="flex">
                       <input
                         type="text"
-                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        className="mt-1 block w-full lowercase shadow-md focus:border-blue-500 border-b-2"
                         value={formData.upi}
                         onChange={(e) =>
                           setFormData({
@@ -576,7 +576,7 @@ export default function LoanApplicationForm() {
                     <span className="flex">
                       <input
                         type="email"
-                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        className="mt-1 block w-full lowercase shadow-md focus:border-blue-500 border-b-2"
                         value={formData.email}
                         onChange={(e) =>
                           setFormData({
@@ -607,7 +607,7 @@ export default function LoanApplicationForm() {
                       />
                     </span>
                   </div>
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-medium">
                       Loan Amount
                     </label>
@@ -722,21 +722,21 @@ export default function LoanApplicationForm() {
                       />
                       %
                     </span>
-                  </div>
+                  </div> */}
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium">Remarks</label>
                   <textarea
                     rows="4"
-                    className="mt-1 block w-full shadow-md border-b-2 focus:border-blue-500"
+                    className="mt-1 block w-full capitalize shadow-md border-b-2 focus:border-blue-500"
                     value={formData.reason}
                     onChange={(e) =>
                       setFormData({ ...formData, remarks: e.target.value })
                     }
                     required
                   ></textarea>
-                </div>
+                </div> */}
 
                 <div className="flex justify-center">
                   <button

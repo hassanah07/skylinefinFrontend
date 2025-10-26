@@ -1,21 +1,22 @@
-// import Navigation from "./components/Nav";
-// import Ribbon from "./components/Ribbon";
+
 import "./globals.css";
-import { Inter, Lobster_Two } from "next/font/google";
-import favicon from "./favicon.ico";
-// import Script from "next/script";
+import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ModeToggle";
-// import Navigation from "./components/Nav";
-// import reportWebVitals from "./reportWebVitals";
-// import Lobster_Two from "@Lobster_Two/LobsterTwo-Regular.ttf";
 
 const inter = Inter({ subsets: ["latin"] });
- 
-const LobsterTwo = Lobster_Two({
-  weight: '400',
-  subsets: ['latin'],
-})
+
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata = {
   title: {
@@ -32,7 +33,9 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={LobsterTwo.className}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -40,8 +43,8 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           {/* <Navigation key={key} /> */}
+
           {children}
-          {/* <Ribbon /> */}
         </ThemeProvider>
       </body>
     </html>
