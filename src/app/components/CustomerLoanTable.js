@@ -1,20 +1,43 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
-import { FaUserEdit, FaPlusCircle } from "react-icons/fa";
+import { FaTrashAlt, FaCalculator, FaThList, FaPrint } from "react-icons/fa";
+import { LuView } from "react-icons/lu";
+import { TiTickOutline } from "react-icons/ti";
 import { CiSearch } from "react-icons/ci";
 import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { redirect, useRouter } from "next/navigation";
 
 const CustomerLoanTable = ({ customerLoanData = [] }) => {
-  // For debugging
-  // console.log(customerLoanData);
-
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [loanId, setLoanId] = useState("");
+  const [otpValue, setOtpValue] = useState(); // OTP entered by the user
   const pageSize = 5;
+  const toastOptions = {
+    theme: "colored",
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  };
 
   // Keep customerLoan derived from props
-  const customerLoan = useMemo(() => customerLoanData || [], [customerLoanData]);
-
+  const customerLoan = useMemo(
+    () => customerLoanData || [],
+    [customerLoanData]
+  );
+  const handleChange = (e) => {
+    if (e.target.name == "otp") {
+      setOtpValue(e.target.value.slice(0, 6));
+    }
+  };
   // reset page when data changes
   useEffect(() => {
     setPage(1);
@@ -46,13 +69,64 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const generateOtp = async (id) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/generateotptoDelete`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ id: id }),
+      }
+    );
+    const fetchRespose = await res.json();
+    console.log(fetchRespose);
+    if (fetchRespose.status === true) {
+      setIsOpen(true);
+      setLoanId(fetchRespose.id);
+    }
+  };
+  const handleDelete = async () => {
+    // setIsOpen(true);
+    const data = { id: loanId, otp: otpValue };
+    console.log(data);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/otpVerify`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const fetchRespose = await res.json();
+    console.log(fetchRespose);
+    if (fetchRespose.status === true) {
+      setIsOpen(false);
+      toast.success(fetchRespose.msg, toastOptions);
+    }
+    if (fetchRespose.status === false) {
+      toast.info(fetchRespose.msg, toastOptions);
+    }
+  };
 
   return (
     <div className="mb-20">
+      <ToastContainer />
       <div className="lg:col-span-2 bg-white dark:bg-gray-500 border rounded-lg shadow-sm p-4">
         {/* Header + Search */}
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-medium mb-3 uppercase">
+            <button
+              onClick={() => router.back()}
+              className="bg-blue-800 px-2 pb-1 text-white rounded cursor-pointer hover:bg-blue-900"
+            >
+              ◀️Back
+            </button>{" "}
             Customer&apos;s Loan Data
           </h2>
           <div className="relative">
@@ -63,7 +137,7 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                 setPage(1);
               }}
               className="w-56 pl-10 pr-3 py-2 rounded-md border border-gray-200 bg-gray-50 dark:bg-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Search name, father, id, mobile, email..."
+              placeholder="Search ..."
             />
             <CiSearch className="absolute left-3 top-1/2 -translate-y-1/2" />
           </div>
@@ -74,9 +148,14 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="text-sm">
-                <th className="py-2 px-3">Customer ID</th>
-                <th className="py-2 px-3">Loan A/C No</th>
+                {/* <th className="py-2 px-3">CIF</th> */}
+                <th className="py-2 px-3">Loan A/C</th>
                 <th className="py-2 px-3">Amount</th>
+                <th className="py-2 px-3">Type</th>
+                <th className="py-2 px-3">Calc</th>
+                <th className="py-2 px-3">Amortization</th>
+                <th className="py-2 px-3">Agreement</th>
+                <th className="py-2 px-3">Delete</th>
                 <th className="py-2 px-3">Actions</th>
               </tr>
             </thead>
@@ -89,52 +168,183 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                 </tr>
               ) : (
                 paginated.map((e, index) => {
-                  const key = e.id ?? e.customerId ?? index;
+                  const key = e._id ?? e.customerId ?? index;
                   return (
                     <tr
                       key={key}
                       className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
                     >
-                      <td className="py-3 px-3">
+                      {/* <td className="py-3 px-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
-                            {(e.customerId || "")
-                              .split(" ")
-                              .map((x) => x[0])
-                              .slice(0, 2)
-                              .join("")}
-                          </div>
                           <div>
                             <div className="font-medium uppercase">
                               {e.customerId || "-"}
                             </div>
                           </div>
                         </div>
-                      </td>
+                      </td> */}
                       <td className="py-3 px-3 text-sm uppercase">
                         {e.loanAccountNumber || "-"}
                       </td>
                       <td className="py-3 px-3">{e.amount ?? "-"}</td>
+                      <td className="py-3 px-3">{e.loanType ?? "-"}</td>
+
+                      <td className="py-3 px-3">
+                        <Link
+                          href={`/loggedInAdmin/loan/emiCalculator/${e.loanAccountNumber}`}
+                          className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                        >
+                          <FaCalculator
+                            className="text-2xl"
+                            title="EMI Calculator"
+                          />
+                        </Link>
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <Link
+                          href={`/loggedInAdmin/loan/amortization/${e.customerId}`}
+                          className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                        >
+                          <FaThList
+                            className="text-2xl mx-auto"
+                            title="EMI Amortization List"
+                          />
+                        </Link>
+                      </td>
+                      <td className="py-3 px-3">
+                        <Link
+                          href={`/loggedInAdmin/loan/loanAgreement/${e._id}`}
+                          className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                        >
+                          <FaPrint
+                            className="text-2xl mx-auto"
+                            title="Get Loan Agreement"
+                          />
+                        </Link>
+                      </td>
+                      <td className="py-3 px-3">
+                        <button
+                          className="mx-4"
+                          onClick={() => {
+                            const id = e._id; // store it in a temp variable
+                            setLoanId(id);
+                            generateOtp(id); // pass the same id immediately
+                          }}
+                        >
+                          <FaTrashAlt
+                            className="text-blue-900 cursor-pointer hover:text-black text-2xl"
+                            title="Delete"
+                          />
+                        </button>
+                      </td>
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-4">
-                          <Link
-                            href={`/loggedInAdmin/customer/profile/${e._id}`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <FaUserEdit
-                              className="text-2xl"
-                              title="Edit Customer Profile"
-                            />
-                          </Link>
-                          <Link
-                            href={`/loggedInAdmin/loan/stepOne/${e._id}`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <FaPlusCircle
-                              className="text-2xl"
-                              title="Process Loan"
-                            />
-                          </Link>
+                          {e.stepOne === false && (
+                            <Link
+                              href={`/loggedInAdmin/loan/stepOne/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <TiTickOutline
+                                className="text-2xl"
+                                title="Step I"
+                              />
+                            </Link>
+                          )}
+                          {e.stepTwo === false && (
+                            <Link
+                              href={`/loggedInAdmin/loan/stepTwo/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <TiTickOutline
+                                className="text-2xl"
+                                title="Step II"
+                              />
+                            </Link>
+                          )}
+
+                          {e.stepThree === false && (
+                            <Link
+                              href={`/loggedInAdmin/loan/stepThree/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <TiTickOutline
+                                className="text-2xl"
+                                title="Step III"
+                              />
+                            </Link>
+                          )}
+                          {e.stepFour === false && (
+                            <Link
+                              href={`/loggedInAdmin/loan/stepFour/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <TiTickOutline
+                                className="text-2xl"
+                                title="Step IV"
+                              />
+                            </Link>
+                          )}
+                          {e.stepFive === false && (
+                            <Link
+                              href={`/loggedInAdmin/loan/stepFive/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <TiTickOutline
+                                className="text-2xl"
+                                title="Step V"
+                              />
+                            </Link>
+                          )}
+                          {e.stepSix === false && (
+                            <Link
+                              href={`/loggedInAdmin/loan/stepSix/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <TiTickOutline
+                                className="text-2xl"
+                                title="Step VI"
+                              />
+                            </Link>
+                          )}
+                          {e.stepSeven === false && (
+                            <Link
+                              href={`/loggedInAdmin/loan/stepSeven/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <TiTickOutline
+                                className="text-2xl"
+                                title="Step VII"
+                              />
+                            </Link>
+                          )}
+                          {e.stepEight === false && (
+                            <>
+                              <Link
+                                href={`/loggedInAdmin/loan/stepEight/${e._id}`}
+                                className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                              >
+                                <TiTickOutline
+                                  className="text-2xl"
+                                  title="Step VIII"
+                                />
+                              </Link>
+                            </>
+                          )}
+                          {e.stepTwo === true &&
+                            e.stepThree === true &&
+                            e.stepFour === true &&
+                            e.stepFive === true &&
+                            e.stepSix === true &&
+                            e.stepSeven === true &&
+                            e.stepEight === true && (
+                              <Link
+                                href={`/loggedInAdmin/loan/viewCustomerLoan/${e._id}`}
+                                className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                              >
+                                <LuView className="text-2xl" title="Step II" />
+                              </Link>
+                            )}
                         </div>
                       </td>
                     </tr>
@@ -172,6 +382,59 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
           </div>
         </div>
       </div>
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-all duration-300"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="bg-blue-50 rounded-lg p-8 max-w-md w-full transform transition-all duration-300
+                                 animate-[slideIn_0.3s_ease-out] opacity-100 scale-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Warning!</h2>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-gray-500 hover:text-gray-700 text-xl transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mb-6 space-y-4">
+              <p className="text-gray-900">Enter OTP To Delete Loan Account:</p>
+              <div className="p-4 rounded-lg">
+                <input
+                  type="number"
+                  className="w-full h-full text-blue-600 rounded border-2 border-gray-900 focus:ring-blue-500"
+                  name="otp"
+                  value={otpValue ?? ""}
+                  onChange={handleChange}
+                />
+              </div>
+              <small className="text-gray-900">
+                Account Can Not Be retrive later
+              </small>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all hover:scale-105"
+              >
+                Close
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all hover:scale-105"
+                onClick={handleDelete}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

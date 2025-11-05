@@ -1,6 +1,8 @@
 "use client";
-import Link from "next/link";
 import React, { useState } from "react";
+import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import {
   FaUserFriends,
@@ -14,9 +16,27 @@ import { FaPeopleGroup, FaPeopleRoof } from "react-icons/fa6";
 import { GrUserWorker } from "react-icons/gr";
 import { LuNotebookPen } from "react-icons/lu";
 import { IoLogOut } from "react-icons/io5";
+import { redirect } from "next/navigation";
 
 const SideBar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toastOptions = {
+    theme: "dark",
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  };
+  const logout = () => {
+    localStorage.removeItem("token");
+    toast.success("Redirecting To Login Page", toastOptions);
+    setTimeout(() => {
+      redirect("/");
+    }, 3000);
+  };
 
   return (
     <>
@@ -33,17 +53,11 @@ const SideBar = () => {
       <aside
         className={`bg-white dark:bg-slate-700 text-black dark:text-white border-r transition-all duration-150 shadow-2xl ${
           sidebarOpen ? "w-64" : "w-16"
-        } min-h-[calc(100vh-64px)]`}
+        } min-h-[calc(100vh-64px)] rounded-b-full`}
       >
-        <nav className="p-4 space-y-2 text-black dark:text-white">
-          <Link
-            href="/loggedInAdmin/home"
-            open={sidebarOpen}
-            className="flex"
-          >
-            <FaHome className="text-2xl mr-2 my-1" />{" "}
-            {sidebarOpen ? "Home" : ""}
-          </Link>
+        {/* min-h-[calc(100vh-64px)] */}
+        <ToastContainer />
+        <nav className="p-4 space-y-4 text-black dark:text-white">
           <Link
             href="/loggedInAdmin/dashboard"
             open={sidebarOpen}
@@ -69,12 +83,12 @@ const SideBar = () => {
             {sidebarOpen ? "Employee" : ""}
           </Link>
           <Link
-            href="/loggedInAdmin/merchant"
+            href="/loggedInAdmin/marchant"
             open={sidebarOpen}
             className="flex"
           >
             <FaUserFriends className="text-2xl mr-2 my-1" />{" "}
-            {sidebarOpen ? "Merchant" : ""}
+            {sidebarOpen ? "Marchant" : ""}
           </Link>
           <Link
             href="/loggedInAdmin/customer"
@@ -85,23 +99,23 @@ const SideBar = () => {
             {sidebarOpen ? "Customer" : ""}
           </Link>
           <Link
-            href="/loggedInAdmin/merchant"
+            href="/loggedInAdmin/marchant"
             open={sidebarOpen}
             className="flex"
           >
             <FaTachometerAlt className="text-2xl mr-2 my-1" />{" "}
             {sidebarOpen ? "Cradit History" : ""}
           </Link>
-          <Link
-            href="/loggedInAdmin/merchant"
+          {/* <Link
+            href="/loggedInAdmin/employee/viewAttandance"
             open={sidebarOpen}
             className="flex"
           >
             <LuNotebookPen className="text-2xl mr-2 my-1" />{" "}
             {sidebarOpen ? "Attendance" : ""}
-          </Link>
+          </Link> */}
           <Link
-            href="/loggedInAdmin/merchant"
+            href="/loggedInAdmin/emiCalculator"
             open={sidebarOpen}
             className="flex"
           >
@@ -116,14 +130,10 @@ const SideBar = () => {
             <FaUserCircle className="text-2xl mr-2 my-1" />{" "}
             {sidebarOpen ? "Profile" : ""}
           </Link>
-          <Link
-            href="/loggedInAdmin/profile"
-            open={sidebarOpen}
-            className="flex"
-          >
+          <a href="#" open={sidebarOpen} className="flex" onClick={logout}>
             <IoLogOut className="text-2xl mr-2 my-1" />{" "}
             {sidebarOpen ? "Logout" : ""}
-          </Link>
+          </a>
           {/* <NavItem icon={<HomeIcon />} label="Overview" open={sidebarOpen} />
           <NavItem icon={<UsersIcon />} label="Employees" open={sidebarOpen} />
           <NavItem
@@ -140,23 +150,6 @@ const SideBar = () => {
 };
 
 export default SideBar;
-
-// function NavItem({ icon, label, open }) {
-//   return (
-//     <div
-//       className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer ${
-//         open ? "justify-start" : "justify-center"
-//       }`}
-//     >
-//       <div className="w-6 h-6">{icon}</div>
-//       {open && (
-//         <div className="text-sm font-medium">
-//           <Link href="/loggedInAdmin/investor">💸 Investor</Link>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
 
 /* Inline SVG icons */
 function HomeIcon() {

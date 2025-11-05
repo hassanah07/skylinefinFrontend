@@ -7,25 +7,15 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const page = ({ params }) => {
+  const router = useRouter();
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
-  const optionsOccupation = [
-    "Salaried",
-    "Self Employed",
-    "Business",
-    "Retaired",
-    "House Wife",
-    "Student",
-    "Others",
-  ];
-  const optionsGST = ["Available"];
   const [permanentAddressYes, setPermanentAddressYes] = useState(false);
   const [permanentAddressNo, setPermanentAddressNo] = useState(true);
   const [disabledYes, setDisabledYes] = useState(false);
   const [disabledNo, setDisabledNo] = useState(true);
-  const [selected, setSelected] = useState([]);
   const [formData, setFormData] = useState({
-    customerId: mySlag,
+    id: mySlag,
     amount: "",
     loanType: "Personal Loan",
     repaymentPeriod: "12",
@@ -75,7 +65,7 @@ const page = ({ params }) => {
     // console.log(formData);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/createLoanAccount`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/loanStepI`,
         {
           method: "POST",
           headers: {
@@ -89,13 +79,13 @@ const page = ({ params }) => {
       if (data.status === true) {
         toast.success(`${data.msg}`, toastOptions);
         setTimeout(() => {
-          redirect("/loggedInAdmin/customer");
+          router.back();
         }, 4000);
       } else {
         console.log(data.err);
         toast.error(`${data.msg}`, toastOptions);
         setTimeout(() => {
-          redirect("/loggedInAdmin/customer");
+          router.back();
         }, 4000);
       }
     } catch (error) {

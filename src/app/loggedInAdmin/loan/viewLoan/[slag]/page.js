@@ -4,14 +4,15 @@ import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useState } from "react";
 
 const Page = ({ params }) => {
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
 
   const router = useRouter();
-  const myData = async () => {
+  const [customerLoanData, setCustomerLoanData] = useState([]);
+  const data = async () => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getCustomerLoans`,
       {
@@ -24,10 +25,10 @@ const Page = ({ params }) => {
       }
     );
     const fetchRespose = await res.json();
-    console.log(fetchRespose);
+    setCustomerLoanData(fetchRespose.data);
   };
   useEffect(() => {
-    myData();
+    data();
   }, []);
 
   return (
@@ -36,9 +37,9 @@ const Page = ({ params }) => {
       <div className="flex relative">
         <SideBar />
         <main className="flex-1 p-6">
-          <div className="sm:rounded-lg w-2/3 mx-auto pt-16 relative">
+          <div className="sm:rounded-lg w-3/4 mx-auto pt-16 relative">
             <div className="relative overflow-x-auto">
-              <CustomerLoanTable customerLoanData={mySlag} />
+              <CustomerLoanTable customerLoanData={customerLoanData} />
             </div>
           </div>
         </main>

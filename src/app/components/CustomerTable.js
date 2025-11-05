@@ -73,7 +73,7 @@ const CustomerTable = ({ customerData = [] }) => {
             <thead>
               <tr className="text-sm">
                 <th className="py-2 px-3">Name</th>
-                <th className="py-2 px-3">Father&apos;s Name</th>
+                {/* <th className="py-2 px-3">Father&apos;s Name</th> */}
                 <th className="py-2 px-3">Customer ID</th>
                 <th className="py-2 px-3">Mobile</th>
                 <th className="py-2 px-3">Actions</th>
@@ -110,9 +110,9 @@ const CustomerTable = ({ customerData = [] }) => {
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 px-3 text-sm uppercase">
+                      {/* <td className="py-3 px-3 text-sm uppercase">
                         {e.fatherName || "-"}
-                      </td>
+                      </td> */}
                       <td className="py-3 px-3">
                         <Link
                           href={`/loggedInAdmin/loan/viewLoan/${

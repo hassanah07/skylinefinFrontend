@@ -43,7 +43,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Activity feed */}
-          <Activity />
+          {/* <Activity /> */}
         </main>
       </div>
     </div>

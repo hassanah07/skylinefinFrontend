@@ -1,0 +1,425 @@
+"use client";
+import React from "react";
+
+const customer = {
+    customerId: 123456,
+    occuType: "Salaried",
+    empType: "Full-Time",
+    orgType: "Private Limited",
+    BussType: "Retail",
+    commuType: "Urban",
+    gstNo: "22AAAAA0000A1Z5",
+    fullName: "Rahul Verma",
+    fatherName: "Arun Verma",
+    motherName: "Sunita Verma",
+    spouseName: "Nisha Verma",
+    dob: "1990-05-10",
+    dependentNo: 2,
+    religion: "Hindu",
+    gender: "Male",
+    education: "MBA",
+    passport: "M1234567",
+    passportExp: "2030-12-31",
+    driving: "DL-123456789",
+    drivingExp: "2028-05-01",
+    pan: "ABCDE1234F",
+    aadhar: "123412341234",
+    voter: "VOTER123456",
+    upi: "rahul@upi",
+    email: "rahul.verma@example.com",
+    mobile: "9876543210",
+};
+
+const loan = {
+    loanAccountNumber: 987654321,
+    customerId: 123456,
+    amount: 500000, // INR 5,00,000
+    loanType: "Personal Loan",
+    repaymentPeriod: "36 months",
+    interestType: "Floating",
+    interestPercentage: "12.5%",
+    presAddress: "Flat 12, Rose Apartments, MG Road",
+    presLandmark: "Near Central Mall",
+    presCity: "Mumbai",
+    presState: "Maharashtra",
+    presPIN: "400001",
+    altMobile: "9123456780",
+    presParmAddressSame: true,
+    permAddress: "Flat 12, Rose Apartments, MG Road",
+    permLandmark: "Near Central Mall",
+    permCity: "Mumbai",
+    permState: "Maharashtra",
+    permPIN: "400001",
+    isCompany: false,
+    annualSalary: 900000,
+    otherAnnualIncome: 50000,
+    bankName: "National Bank",
+    bankBranch: "MG Road Branch",
+    bankIfsc: "NBNK0000123",
+    bankAcNo: 123456789012,
+    bankAcType: "Savings",
+    assetDetails: [
+        { assetType: "Vehicle", assetValue: 300000 },
+        { assetType: "Savings", assetValue: 50000 },
+    ],
+    collateralDetails: [
+        {
+            collateralType: "None",
+            collateralName: "",
+            collateralDetails: "",
+            propertyOwnerOne: "",
+            propertyOwnerTwo: "",
+            propertyAddress: "",
+            propertyCurrentValue: 0,
+        },
+    ],
+    existingLoanDetails: [],
+    personalReferenceOne: [
+        {
+            referenceName: "Anita Sharma",
+            relationship: "Friend",
+            referanceAddress: "12, Lake View, Mumbai",
+            referanceCity: "Mumbai",
+            referanceState: "Maharashtra",
+            referancePIN: 400002,
+            referenceMobile: 9988776655,
+        },
+    ],
+    finalizedByUser: "rahul.verma",
+    finalizedByAdmin: "admin1",
+    isCompleted: true,
+    isPaymentProcessed: false,
+};
+
+export default function Page() {
+    const printDoc = () => {
+        if (typeof window !== "undefined") window.print();
+    };
+
+    // inline style for print page breaks and hide UI + logo print tweak
+    const printStyles = `
+        @media print {
+            .no-print { display: none !important; }
+            .page { margin: 0; box-shadow: none; -webkit-print-color-adjust: exact; }
+            html, body { height: auto; }
+            .bg-logo { opacity: 0.06 !important; }
+        }
+        .pagebreak { page-break-after: always; }
+        /* ensure page is positioned for absolute logo */
+        .page { position: relative; }
+        .bg-logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); pointer-events: none; user-select: none; }
+    `;
+
+    const formatCurrency = (n) =>
+        new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(
+            n
+        );
+
+    // Replace /logo.png with your actual logo path or a base64 data URL.
+    const logoSrc = "/logo.png";
+
+    const Logo = () => (
+        <img
+            src={logoSrc}
+            alt=""
+            aria-hidden="true"
+            className="bg-logo w-72 opacity-10"
+            style={{ maxWidth: "40%", maxHeight: "40%" }}
+        />
+    );
+
+    return (
+        <div className="bg-gray-100 min-h-screen p-6">
+            <style>{printStyles}</style>
+
+            <div className="flex justify-between items-center mb-4 no-print">
+                <div>
+                    <h1 className="text-2xl font-semibold">Personal Loan Agreement</h1>
+                    <p className="text-sm text-gray-600">Agreement ID: {loan.loanAccountNumber}</p>
+                </div>
+                <div className="space-x-2">
+                    <button
+                        onClick={printDoc}
+                        className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+                    >
+                        Print
+                    </button>
+                </div>
+            </div>
+
+            {/* Page 1: Agreement Header & Parties */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 1: Agreement Details</h2>
+                <p className="mb-2">
+                    This Personal Loan Agreement ("Agreement") is made between Lender ("Company") and Borrower.
+                </p>
+
+                <section className="mt-6">
+                    <h3 className="font-semibold mb-2">Borrower Details</h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div className="text-gray-600">Full Name</div>
+                            <div className="font-medium">{customer.fullName}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Customer ID</div>
+                            <div className="font-medium">{customer.customerId}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Father / Spouse</div>
+                            <div className="font-medium">{customer.fatherName} / {customer.spouseName}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">PAN / Aadhar</div>
+                            <div className="font-medium">{customer.pan} / {customer.aadhar}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Mobile / Email</div>
+                            <div className="font-medium">{customer.mobile} / {customer.email || "N/A"}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Occupation</div>
+                            <div className="font-medium">{customer.occuType} ({customer.empType})</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Present Address</div>
+                            <div className="font-medium">{loan.presAddress}, {loan.presLandmark}, {loan.presCity} - {loan.presPIN}, {loan.presState}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="mt-6">
+                    <h3 className="font-semibold mb-2">Loan Summary</h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div className="text-gray-600">Loan Type</div>
+                            <div className="font-medium">{loan.loanType}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Loan Amount</div>
+                            <div className="font-medium">{formatCurrency(loan.amount)}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Interest</div>
+                            <div className="font-medium">{loan.interestType} @ {loan.interestPercentage}</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-600">Repayment Period</div>
+                            <div className="font-medium">{loan.repaymentPeriod}</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            {/* Page 2: Definitions */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 2: Definitions</h2>
+                <p className="text-sm mb-3">
+                    In this Agreement, unless the context otherwise requires, the following expressions shall have the following meanings:
+                </p>
+                <ol className="list-decimal pl-6 space-y-2 text-sm">
+                    <li>"Borrower" means the person named in this Agreement (including his heirs, executors and assigns).</li>
+                    <li>"Lender" or "Company" means the institution advancing the Loan.</li>
+                    <li>"Loan" means the principal amount advanced together with interest, charges and other monies payable under this Agreement.</li>
+                    <li>"Repayment Schedule" means the schedule of instalments provided to the Borrower.</li>
+                    <li>"Default" means the occurrence of any event of default as set out in this Agreement.</li>
+                </ol>
+            </div>
+
+            {/* Page 3: Loan Disbursement */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 3: Disbursement</h2>
+                <p className="text-sm mb-3">
+                    Subject to the terms herein, the Lender shall disburse the Loan amount to Borrower by direct credit to Borrower's bank account as below:
+                </p>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <div className="text-gray-600">Bank Name</div>
+                        <div className="font-medium">{loan.bankName}</div>
+                    </div>
+                    <div>
+                        <div className="text-gray-600">Branch / IFSC</div>
+                        <div className="font-medium">{loan.bankBranch} / {loan.bankIfsc}</div>
+                    </div>
+                    <div>
+                        <div className="text-gray-600">Account Number</div>
+                        <div className="font-medium">{loan.bankAcNo}</div>
+                    </div>
+                    <div>
+                        <div className="text-gray-600">Account Type</div>
+                        <div className="font-medium">{loan.bankAcType}</div>
+                    </div>
+                </div>
+
+                <h3 className="font-semibold mt-6 mb-2">Conditions Precedent to Disbursement</h3>
+                <ul className="list-disc pl-6 text-sm space-y-2">
+                    <li>Execution of this Agreement by the Borrower.</li>
+                    <li>Submission of required KYC and documents satisfactory to the Lender.</li>
+                    <li>Creation of security (if any) and completion of documentation as requested.</li>
+                </ul>
+            </div>
+
+            {/* Page 4: Interest & Repayment */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 4: Interest & Repayment</h2>
+
+                <h3 className="font-semibold mb-2">Interest</h3>
+                <p className="text-sm mb-3">
+                    Interest shall be charged on the outstanding principal at the rate of {loan.interestPercentage} per annum on a {loan.interestType.toLowerCase()} basis. Interest will be computed on the reducing balance method unless otherwise specified.
+                </p>
+
+                <h3 className="font-semibold mb-2">Repayment</h3>
+                <p className="text-sm mb-3">
+                    Borrower shall repay the Loan in equal monthly instalments over {loan.repaymentPeriod}. Instalments shall be payable on the due date stated in the Repayment Schedule. Payments shall be first applied to interest and then to principal.
+                </p>
+
+                <h3 className="font-semibold mb-2">Repayment Mode</h3>
+                <p className="text-sm">
+                    Repayment shall be by electronic debit (ECS/auto debit/standing instruction), cheque, UPI or direct credit to the Lender's designated account.
+                </p>
+            </div>
+
+            {/* Page 5: Fees, Charges & Taxes */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 5: Fees, Charges & Taxes</h2>
+                <ul className="list-disc pl-6 text-sm space-y-2">
+                    <li>Processing Fee: As agreed between the parties and payable upfront/at disbursement.</li>
+                    <li>Late Payment Charges: In the event of delayed payment, the Lender may levy late payment charges at the rate specified in the schedule.</li>
+                    <li>Prepayment Charges: Prepayment, if permitted, may attract prepayment charges as notified to the Borrower.</li>
+                    <li>Taxes: All taxes, levies and duties payable in respect of the Loan shall be borne by the Borrower.</li>
+                    <li>Legal and Recovery Costs: Borrower shall be liable to reimburse reasonable costs incurred in effecting recovery in case of default.</li>
+                </ul>
+
+                <div className="mt-4 text-sm">
+                    <strong>Illustration:</strong> For Loan amount {formatCurrency(loan.amount)} at {loan.interestPercentage}, total interest amount and EMI will vary based on the effective rate and compounding; the Borrower should request an amortization schedule for exact figures.
+                </div>
+            </div>
+
+            {/* Page 6: Representations & Warranties */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 6: Representations & Warranties</h2>
+                <p className="text-sm mb-3">
+                    The Borrower represents and warrants to the Lender that:
+                </p>
+                <ol className="list-decimal pl-6 space-y-2 text-sm">
+                    <li>The Borrower is legally competent to enter this Agreement.</li>
+                    <li>All information and documents provided to the Lender are true, complete and accurate.</li>
+                    <li>There are no pending legal proceedings which would materially affect the Borrower's ability to repay.</li>
+                    <li>No Event of Default has occurred or is continuing.</li>
+                </ol>
+            </div>
+
+            {/* Page 7: Covenants */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 7: Covenants</h2>
+                <p className="text-sm mb-3">The Borrower covenants with the Lender that until all sums due under this Agreement have been paid in full:</p>
+                <ul className="list-disc pl-6 space-y-2 text-sm">
+                    <li>Borrower shall promptly pay instalments and other charges when due.</li>
+                    <li>Borrower shall not create or permit any security interest over assets intended to secure this Loan except as permitted by the Lender.</li>
+                    <li>Borrower shall promptly inform the Lender of any material adverse change in financial condition.</li>
+                </ul>
+
+                <h3 className="font-semibold mt-4">Information Undertaking</h3>
+                <p className="text-sm">
+                    Borrower agrees to provide such financial statements and documents as the Lender may reasonably require from time to time.
+                </p>
+            </div>
+
+            {/* Page 8: Events of Default & Remedies */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 8: Events of Default & Remedies</h2>
+                <p className="text-sm mb-3">The following shall constitute Events of Default:</p>
+                <ol className="list-decimal pl-6 space-y-2 text-sm">
+                    <li>Failure to pay any instalment or other sum due under this Agreement when due and such failure continues for more than the grace period (if any).</li>
+                    <li>Breach of any representation, warranty or covenant given by the Borrower.</li>
+                    <li>Any insolvency, bankruptcy or winding-up proceedings initiated against the Borrower.</li>
+                </ol>
+
+                <h3 className="font-semibold mt-4">Remedies</h3>
+                <p className="text-sm">
+                    Upon occurrence of an Event of Default, the Lender may, without prejudice to other rights, accelerate the Loan, demand immediate payment of all sums due, enforce security, and take any other lawful action.
+                </p>
+            </div>
+
+            {/* Page 9: Security & Collateral */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6 pagebreak">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 9: Security & Collateral</h2>
+                <p className="text-sm mb-3">
+                    Where applicable, the Loan shall be secured by the collateral described below. Security documents shall be executed prior to or at disbursement.
+                </p>
+
+                {loan.collateralDetails && loan.collateralDetails.length > 0 ? (
+                    loan.collateralDetails.map((c, idx) => (
+                        <div key={idx} className="mb-3 text-sm">
+                            <div className="font-medium">Collateral {idx + 1}: {c.collateralType || "N/A"}</div>
+                            <div>{c.collateralDetails || "No collateral details provided."}</div>
+                            {c.propertyAddress && <div className="text-gray-600">Property Address: {c.propertyAddress}</div>}
+                            {c.propertyCurrentValue ? <div className="text-gray-600">Current Value: {formatCurrency(c.propertyCurrentValue)}</div> : null}
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-sm">No collateral has been provided for this Loan.</div>
+                )}
+
+                <h3 className="font-semibold mt-4">General Lien</h3>
+                <p className="text-sm">
+                    The Borrower authorizes the Lender to appropriate any monies held by the Lender in or towards satisfaction of amounts due under this Agreement.
+                </p>
+            </div>
+
+            {/* Page 10: Miscellaneous & Signatures */}
+            <div className="page relative bg-white p-10 rounded shadow mb-6">
+                <Logo />
+                <h2 className="text-xl font-bold mb-4">Page 10: Miscellaneous & Signatures</h2>
+
+                <h3 className="font-semibold mt-2">Notices</h3>
+                <p className="text-sm mb-2">
+                    Any notice required under this Agreement shall be in writing and delivered to the addresses provided by the parties.
+                </p>
+
+                <h3 className="font-semibold mt-2">Governing Law</h3>
+                <p className="text-sm mb-2">
+                    This Agreement shall be governed by and construed in accordance with the laws of India and the courts at the Borrower's city shall have exclusive jurisdiction.
+                </p>
+
+                <h3 className="font-semibold mt-2">Entire Agreement</h3>
+                <p className="text-sm mb-4">
+                    This Agreement, together with the schedules and documents referred to herein, constitutes the entire agreement between the parties and supersedes all prior arrangements.
+                </p>
+
+                <div className="mt-6 grid grid-cols-2 gap-8">
+                    <div className="text-sm">
+                        <div className="text-gray-600">Borrower</div>
+                        <div className="mt-6">
+                            <div className="font-medium">{customer.fullName}</div>
+                            <div className="text-gray-600">Signature: ______________________</div>
+                            <div className="text-gray-600 mt-1">Date: __________________________</div>
+                        </div>
+                    </div>
+
+                    <div className="text-sm">
+                        <div className="text-gray-600">For and on behalf of Lender</div>
+                        <div className="mt-6">
+                            <div className="font-medium">Authorized Signatory</div>
+                            <div className="text-gray-600">Signature: ______________________</div>
+                            <div className="text-gray-600 mt-1">Date: __________________________</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-6 text-xs text-gray-500">
+                    This is a sample agreement for demonstration purposes only. The actual loan agreement terms, fees and legal wording will vary and should be reviewed by legal counsel before use.
+                </div>
+            </div>
+        </div>
+    );
+}
