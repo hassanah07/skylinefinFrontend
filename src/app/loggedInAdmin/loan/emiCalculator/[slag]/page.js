@@ -247,8 +247,10 @@ export default function Page({ params }) {
         }
       );
       const responseData = await response.json();
+      console.log(responseData);
       toast.success(responseData.msg, toastOptions);
     } catch (error) {
+      console.log(error);
       toast.error(responseData.msg, toastOptions);
     }
   };

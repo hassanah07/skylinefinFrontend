@@ -27,7 +27,27 @@ const Page = ({ params }) => {
     const fetchRespose = await res.json();
     setCustomerLoanData(fetchRespose.data);
   };
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
   useEffect(() => {
+    getAdminProfile();
     data();
   }, []);
 

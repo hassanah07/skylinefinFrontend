@@ -64,6 +64,28 @@ const Page = () => {
       role
     );
   };
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
   return (
     <div>
       <form className="max-w-lg mx-auto">

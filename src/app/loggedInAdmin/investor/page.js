@@ -1,6 +1,7 @@
 //page: "/loggedInAdmin/customer"
 "use client";
 import CustomerTable from "@/app/components/CustomerTable";
+import InvestorTable from "@/app/components/Investor";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import Link from "next/link";
@@ -8,12 +9,12 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
-  const [customerData, setCustomerData] = useState([]);
-  const salary = 250000;
   const router = useRouter();
+  const [customerData, setCustomerData] = useState([]);
+  const [investorData, setInvestorData] = useState([]);
   const data = async () => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getLoanUsers`,
+      `${process.env.NEXT_PUBLIC_HOST}/api/investor/getInvestor`,
       {
         method: "POST",
         headers: {
@@ -24,8 +25,8 @@ const Page = () => {
       }
     );
     const fetchRespose = await res.json();
-    // console.log(fetchRespose.getUser[0]);
-    setCustomerData(fetchRespose.getUser);
+    console.log(fetchRespose);
+    setInvestorData(fetchRespose.getInvestor);
   };
   useEffect(() => {
     data();
@@ -38,17 +39,16 @@ const Page = () => {
         <SideBar />
         <main className="flex-1 p-6">
           <div className="sm:rounded-lg w-full mx-auto pt-16 relative">
-            
             <span className="absolute right-0 top-5">
               <Link
-                href="/loggedInAdmin/customer/initialCheck"
+                href="/loggedInAdmin/investor/initialCheck"
                 className="bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-600"
               >
-                Add Loan User
+                Add New Investor
               </Link>
             </span>
             <div className="relative overflow-x-auto">
-              <CustomerTable customerData={customerData} />
+              <InvestorTable investorData={investorData} />
             </div>
           </div>
         </main>

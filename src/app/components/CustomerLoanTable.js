@@ -113,6 +113,28 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
       toast.info(fetchRespose.msg, toastOptions);
     }
   };
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
 
   return (
     <div className="mb-20">
@@ -184,7 +206,11 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                         </div>
                       </td> */}
                       <td className="py-3 px-3 text-sm uppercase">
-                        {e.loanAccountNumber || "-"}
+                        <Link
+                          href={`/loggedInAdmin/loan/statement/${e.loanAccountNumber}`}
+                        >
+                          {e.loanAccountNumber || "-"}
+                        </Link>
                       </td>
                       <td className="py-3 px-3">{e.amount ?? "-"}</td>
                       <td className="py-3 px-3">{e.loanType ?? "-"}</td>
@@ -203,7 +229,7 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
 
                       <td className="py-3 px-3">
                         <Link
-                          href={`/loggedInAdmin/loan/amortization/${e.customerId}`}
+                          href={`/loggedInAdmin/loan/amortization/${e.loanAccountNumber}`}
                           className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                         >
                           <FaThList
@@ -342,7 +368,10 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                                 href={`/loggedInAdmin/loan/viewCustomerLoan/${e._id}`}
                                 className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                               >
-                                <LuView className="text-2xl" title="Step II" />
+                                <LuView
+                                  className="text-2xl"
+                                  title="Setup Payment"
+                                />
                               </Link>
                             )}
                         </div>

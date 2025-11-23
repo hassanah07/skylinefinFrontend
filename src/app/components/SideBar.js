@@ -11,10 +11,11 @@ import {
   FaCalculator,
   FaHome,
 } from "react-icons/fa";
+import { AiOutlineTransaction } from "react-icons/ai";
 import { MdDashboard } from "react-icons/md";
 import { FaPeopleGroup, FaPeopleRoof } from "react-icons/fa6";
 import { GrUserWorker } from "react-icons/gr";
-import { LuNotebookPen } from "react-icons/lu";
+import { GiWallet } from "react-icons/gi";
 import { IoLogOut } from "react-icons/io5";
 import { redirect } from "next/navigation";
 
@@ -53,7 +54,7 @@ const SideBar = () => {
       <aside
         className={`bg-white dark:bg-slate-700 text-black dark:text-white border-r transition-all duration-150 shadow-2xl ${
           sidebarOpen ? "w-64" : "w-16"
-        } min-h-[calc(100vh-64px)] rounded-b-full`}
+        } min-h-[calc(100vh-64px)] rounded`}
       >
         {/* min-h-[calc(100vh-64px)] */}
         <ToastContainer />
@@ -121,6 +122,22 @@ const SideBar = () => {
           >
             <FaCalculator className="text-2xl mr-2 my-1" />{" "}
             {sidebarOpen ? "EMI Calculator" : ""}
+          </Link>
+          <Link
+            href="/loggedInAdmin/wallet"
+            open={sidebarOpen}
+            className="flex"
+          >
+            <GiWallet className="text-2xl mr-2 my-1" />{" "}
+            {sidebarOpen ? "Wallet" : ""}
+          </Link>
+          <Link
+            href="/loggedInAdmin/transaction"
+            open={sidebarOpen}
+            className="flex"
+          >
+            <AiOutlineTransaction className="text-2xl mr-2 my-1" />{" "}
+            {sidebarOpen ? "Transaction" : ""}
           </Link>
           <Link
             href="/loggedInAdmin/profile"

@@ -1,9 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
 import { FaCamera, FaSignature, FaTimes } from "react-icons/fa";
 
 export default function ProfilePage() {
+  const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [user, setUser] = useState({
     fullName: "Anowarul Hassan",
     fatherName: "Mohammad Hassan",
@@ -60,6 +63,28 @@ export default function ProfilePage() {
       setImageSrc(null);
     };
   };
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

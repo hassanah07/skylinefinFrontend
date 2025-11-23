@@ -3,6 +3,8 @@ import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import { redirect } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TABS = ["Profile", "Security"];
 
@@ -24,7 +26,7 @@ export default function AdminProfilePage() {
     mother: "",
     spouse: "",
     address: "",
-    dist: "",
+    landmark: "",
     state: "",
     pin: "",
   });
@@ -50,6 +52,16 @@ export default function AdminProfilePage() {
   // UI state
   const [message, setMessage] = useState(null);
   const fileInputRef = useRef(null);
+  const toastOptions = {
+    theme: "dark",
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  };
 
   // Load persisted state from localStorage
   const getAdminProfile = async () => {
@@ -80,7 +92,7 @@ export default function AdminProfilePage() {
         mother: response.authUser.mother || "",
         spouse: response.authUser.spouse || "",
         address: response.authUser.address || "",
-        dist: response.authUser.dist || "",
+        landmark: response.authUser.landmark || "",
         state: response.authUser.state || "",
         pin: response.authUser.pin || "",
       });
@@ -161,7 +173,7 @@ export default function AdminProfilePage() {
     // persisted via effect
   };
 
-  const saveSecurity = (e) => {
+  const saveSecurity = async (e) => {
     e?.preventDefault();
     if (!security.currentPassword || !security.newPassword) {
       showMessage("Fill current and new password.");
@@ -175,9 +187,29 @@ export default function AdminProfilePage() {
       showMessage("New password and confirmation do not match.");
       return;
     }
-    // In real app: call API to update password. Here we just clear fields.
-    setSecurity({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    showMessage("Password updated (simulated).");
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/changePassword`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify(security),
+      }
+    );
+    response = await response.json();
+    console.log(response);
+    if (response.login === true) {
+      toast.info(response.msg, toastOptions);
+    } else {
+      toast.info(response.msg, toastOptions);
+      showMessage("Password updated");
+      localStorage.removeItem("token");
+      setTimeout(() => {
+        redirect("/");
+      }, 3000);
+    }
   };
 
   const saveNotifications = (e) => {
@@ -199,6 +231,7 @@ export default function AdminProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black">
+      <ToastContainer />
       <TopBar />
       <div className="flex relative">
         <SideBar />
@@ -325,9 +358,15 @@ export default function AdminProfilePage() {
                         Full name
                       </label>
                       <input
+                        type="text"
                         value={profile.name}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, name: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            name: e.target.value
+                              .replace(/[^A-Z ]/g, "")
+                              .slice(0 - 15),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm uppercase"
                       />
@@ -337,9 +376,16 @@ export default function AdminProfilePage() {
                         Email address
                       </label>
                       <input
+                        type="text"
                         value={profile.email}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, email: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            email: e.target.value
+                              .trim()
+                              .replace(/[^a-z0-9@_#]/g, "")
+                              .slice(0 - 40),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm"
                       />
@@ -351,9 +397,13 @@ export default function AdminProfilePage() {
                         Mobile No
                       </label>
                       <input
+                        type="number"
                         value={profile.mobile}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, mobile: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            mobile: e.target.value.slice(0 - 10),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm uppercase"
                       />
@@ -363,9 +413,13 @@ export default function AdminProfilePage() {
                         AADHAAR No
                       </label>
                       <input
+                        type="number"
                         value={profile.aadhaar}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, aadhaar: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            aadhaar: e.target.value.slice(0 - 12),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm"
                       />
@@ -375,9 +429,16 @@ export default function AdminProfilePage() {
                     <div>
                       <label className="block text-sm font-medium">PAN</label>
                       <input
+                        type="text"
                         value={profile.pan}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, pan: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            pan: e.target.value
+                              .slice(0 - 10)
+                              .toUpperCase()
+                              .replace(/[^A-Z]/g, ""),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm uppercase"
                       />
@@ -389,7 +450,13 @@ export default function AdminProfilePage() {
                       <input
                         value={profile.father}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, father: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            father: e.target.value
+                              .slice(0 - 30)
+                              .toUpperCase()
+                              .replace(/[^A-Z]/g, ""),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm"
                       />
@@ -403,7 +470,13 @@ export default function AdminProfilePage() {
                       <input
                         value={profile.mother}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, mother: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            mother: e.target.value
+                              .slice(0 - 30)
+                              .toUpperCase()
+                              .replace(/[^A-Z]/g, ""),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm uppercase"
                       />
@@ -415,7 +488,13 @@ export default function AdminProfilePage() {
                       <input
                         value={profile.spouse}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, spouse: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            spouse: e.target.value
+                              .slice(0 - 30)
+                              .toUpperCase()
+                              .replace(/[^A-Z]/g, ""),
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm"
                       />
@@ -436,11 +515,16 @@ export default function AdminProfilePage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium">Dist</label>
+                      <label className="block text-sm font-medium">
+                        landmark
+                      </label>
                       <input
-                        value={profile.dist}
+                        value={profile.landmark}
                         onChange={(e) =>
-                          setProfile((p) => ({ ...p, dist: e.target.value }))
+                          setProfile((p) => ({
+                            ...p,
+                            landmark: e.target.value,
+                          }))
                         }
                         className="mt-1 block w-full border-b-2 shadow-sm"
                       />
@@ -551,6 +635,7 @@ export default function AdminProfilePage() {
                     <button
                       type="submit"
                       className="px-4 py-2 bg-indigo-600 text-white rounded"
+                      onClick={saveSecurity}
                     >
                       Change password
                     </button>
@@ -570,160 +655,6 @@ export default function AdminProfilePage() {
                   </div>
                 </form>
               )}
-
-              {/* {activeTab === "Notifications" && (
-                <form
-                  onSubmit={saveNotifications}
-                  className="space-y-4 max-w-md"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700">
-                        Email notifications
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        Receive system updates and alerts via email.
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={notifications.email}
-                        onChange={(e) =>
-                          setNotifications((n) => ({
-                            ...n,
-                            email: e.target.checked,
-                          }))
-                        }
-                      />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 transition" />
-                    </label>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700">
-                        SMS notifications
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        Receive critical alerts via SMS.
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={notifications.sms}
-                        onChange={(e) =>
-                          setNotifications((n) => ({
-                            ...n,
-                            sms: e.target.checked,
-                          }))
-                        }
-                      />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-indigo-600 transition" />
-                    </label>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700">
-                        Push notifications
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        Browser and app notifications.
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={notifications.push}
-                        onChange={(e) =>
-                          setNotifications((n) => ({
-                            ...n,
-                            push: e.target.checked,
-                          }))
-                        }
-                      />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-indigo-600 transition" />
-                    </label>
-                  </div>
-
-                  <div>
-                    <button
-                      type="submit"
-                      className="px-4 py-2 bg-indigo-600 text-white rounded"
-                    >
-                      Save preferences
-                    </button>
-                  </div>
-                </form>
-              )} */}
-
-              {/* {activeTab === "Settings" && (
-                <form onSubmit={saveSettings} className="space-y-4 max-w-md">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700">
-                        Two-factor authentication
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        Add an extra layer of security to your account.
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={settings.twoFactor}
-                        onChange={(e) =>
-                          setSettings((s) => ({
-                            ...s,
-                            twoFactor: e.target.checked,
-                          }))
-                        }
-                      />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-indigo-600 transition" />
-                    </label>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-gray-700">
-                        Dark mode
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        Switch UI theme to dark colors.
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={settings.darkMode}
-                        onChange={(e) =>
-                          setSettings((s) => ({
-                            ...s,
-                            darkMode: e.target.checked,
-                          }))
-                        }
-                      />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-indigo-600 transition" />
-                    </label>
-                  </div>
-
-                  <div>
-                    <button
-                      type="submit"
-                      className="px-4 py-2 bg-indigo-600 text-white rounded"
-                    >
-                      Save settings
-                    </button>
-                  </div>
-                </form>
-              )} */}
             </div>
           </div>
         </div>

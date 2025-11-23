@@ -1,91 +1,84 @@
 "use client";
-import React, { useMemo, useState } from "react";
-import { FaUserEdit } from "react-icons/fa";
+import React, { useMemo, useState, useEffect } from "react";
+import { FaUserEdit, FaPlusCircle } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-const InvestorTable = () => {
+const InvestorTable = ({ investorData = [] }) => {
+  // For debugging
+  // console.log(investorData);
+
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
-  // employee datas
+  // Keep customers derived from props
+  const customers = useMemo(() => investorData || [], [investorData]);
 
-  const employees = useMemo(
-    () => [
-      {
-        id: 1,
-        name: "Alice Johnson",
-        role: "HR Manager",
-        email: "alice@example.com",
-        status: "Active",
-      },
-      {
-        id: 2,
-        name: "Bob Smith",
-        role: "Manager",
-        email: "bob@example.com",
-        status: "Active",
-      },
-      {
-        id: 3,
-        name: "Anowarul Hassan",
-        role: "MERN Developer",
-        email: "contact@hassan.dev",
-        status: "Present",
-      },
-      {
-        id: 4,
-        name: "David Lee",
-        role: "Field Officer",
-        email: "david@example.com",
-        status: "Active",
-      },
-      {
-        id: 5,
-        name: "Eve Turner",
-        role: "EMI Collector",
-        email: "eve@example.com",
-        status: "Active",
-      },
-      {
-        id: 6,
-        name: "Frank Wu",
-        role: "Loan Processor",
-        email: "frank@example.com",
-        status: "Active",
-      },
-      {
-        id: 7,
-        name: "Asmot Ali",
-        role: "Recruiter",
-        email: "asmot@eskylineefinance.com",
-        status: "Active",
-      },
-      {
-        id: 8,
-        name: "Hiro Tanaka",
-        role: "Sales Executive",
-        email: "hiro@example.com",
-        status: "Active",
-      },
-    ],
-    []
-  );
+  // reset page when data changes
+  useEffect(() => {
+    setPage(1);
+  }, [investorData]);
 
-  const filtered = employees.filter(
-    (e) =>
-      e.name.toLowerCase().includes(query.toLowerCase()) ||
-      e.email.toLowerCase().includes(query.toLowerCase()) ||
-      e.role.toLowerCase().includes(query.toLowerCase())
-  );
+  // normalize query once
+  const q = query.trim().toLowerCase();
+
+  // Filter using the actual keys your UI shows (fullName, fatherName, customerId, mobile, email, role)
+  const filtered = customers.filter((e) => {
+    if (!q) return true; // no query => keep all
+    // create searchable string from the record (coerce to string and lowercase)
+    const fields = [
+      e.firstName,
+      e.lastName,
+      e.father,
+      // e.inv,
+      e.investorId, // keep both if some records use "name"
+      e.mobile,
+      // e.email,
+      e.profitPercentage,
+      e.stage,
+    ];
+    const joined = fields
+      .map((f) =>
+        f === undefined || f === null ? "" : String(f).toLowerCase()
+      )
+      .join(" ");
+    return joined.includes(q);
+  });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
+
   return (
-    <>
+    <div className="mb-20">
       <div className="lg:col-span-2 bg-white dark:bg-gray-500 border rounded-lg shadow-sm p-4">
+        {/* Header + Search */}
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-medium mb-3">Investor</h2>
+          <h2 className="text-lg font-medium mb-3 uppercase">Investor Data</h2>
           <div className="relative">
             <input
               value={query}
@@ -94,25 +87,22 @@ const InvestorTable = () => {
                 setPage(1);
               }}
               className="w-56 pl-10 pr-3 py-2 rounded-md border border-gray-200 bg-gray-50 dark:bg-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Search employees, roles, emails..."
+              placeholder="Search name, father, id, mobile, email..."
             />
-            <CiSearch className="text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-              New Investor
-            </button>
+            <CiSearch className="absolute left-3 top-1/2 -translate-y-1/2" />
           </div>
         </div>
+
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="text-sm">
                 <th className="py-2 px-3">Name</th>
-                <th className="py-2 px-3">Role</th>
-                <th className="py-2 px-3">Email</th>
-                <th className="py-2 px-3">Status</th>
+                {/* <th className="py-2 px-3">Father&apos;s Name</th> */}
+                <th className="py-2 px-3">Investor ID</th>
+                <th className="py-2 px-3">Inv. Amount</th>
+                <th className="py-2 px-3">Profit %</th>
                 <th className="py-2 px-3">Actions</th>
               </tr>
             </thead>
@@ -124,45 +114,71 @@ const InvestorTable = () => {
                   </td>
                 </tr>
               ) : (
-                paginated.map((e) => (
-                  <tr
-                    key={e.id}
-                    className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
-                  >
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
-                          {e.name
-                            .split(" ")
-                            .map((x) => x[0])
-                            .slice(0, 2)
-                            .join("")}
+                paginated.map((e, index) => {
+                  const key = e.id ?? e._id ?? index;
+                  return (
+                    <tr
+                      key={key}
+                      className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
+                    >
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
+                            {(e.firstName || e.name || "")
+                              .split(" ")
+                              .map((x) => x[0])
+                              .slice(0, 2)
+                              .join("")}
+                          </div>
+                          <div>
+                            <div className="font-medium uppercase">
+                              {e.firstName || "-"}&nbsp;
+                              {e.lastName || "-"}
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-medium">{e.name}</div>
+                      </td>
+                      {/* <td className="py-3 px-3 text-sm uppercase">
+                        {e.fatherName || "-"}
+                      </td> */}
+                      <td className="py-3 px-3">
+                        <Link
+                          href={`/loggedInAdmin/loan/viewLoan/${
+                            e.investorId ?? "-"
+                          }`}
+                        >
+                          {e.investorId ?? "-"}
+                        </Link>
+                      </td>
+                      <td className="py-3 px-3 text-sm">{e.amount ?? "-"}</td>
+                      <td className="py-3 px-3 text-sm">
+                        {e.profitPercentage ?? "-"}
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-4">
+                          <Link
+                            href={`/loggedInAdmin/customer/profile/${e._id}`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <FaUserEdit
+                              className="text-2xl"
+                              title="Edit Customer Profile"
+                            />
+                          </Link>
+                          <Link
+                            href={`/loggedInAdmin/loan/stepOne/${e._id}`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <FaPlusCircle
+                              className="text-2xl"
+                              title="Process Loan"
+                            />
+                          </Link>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-3">{e.role}</td>
-                    <td className="py-3 px-3 text-sm">{e.email}</td>
-                    <td className="py-3 px-3">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor(
-                          e.status
-                        )}`}
-                      >
-                        {e.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <button className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline">
-                          <FaUserEdit className="text-2xl" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -195,15 +211,8 @@ const InvestorTable = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
 export default InvestorTable;
-
-function statusColor(status) {
-  if (status === "Active") return "bg-green-100 text-green-700";
-  if (status === "On Leave") return "bg-yellow-100 text-yellow-700";
-  if (status === "Inactive") return "bg-gray-100 text-gray-700";
-  return "bg-gray-100 text-gray-700";
-}

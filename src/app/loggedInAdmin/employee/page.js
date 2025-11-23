@@ -1,6 +1,7 @@
 //page: "/loggedInAdmin/customer"
 "use client";
 import CustomerTable from "@/app/components/CustomerTable";
+import EmployeeTable from "@/app/components/EmployeeTable";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import Link from "next/link";
@@ -8,27 +9,51 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Page = () => {
-  const [customerData, setCustomerData] = useState([]);
-  const salary = 250000;
-  const router = useRouter();
-  const data = async () => {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getLoanUsers`,
+  const [employee, setEmployee] = useState(0);
+
+  const employeeCount = async () => {
+    try {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/tellyCount/employeeCount`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify(),
+        }
+      );
+      res = await res.json();
+      console.log(res);
+      setEmployee(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "admin-token": localStorage.getItem("token"),
         },
-        body: JSON.stringify(),
+        // body: JSON.stringify({ email }),
       }
     );
-    const fetchRespose = await res.json();
-    // console.log(fetchRespose.getUser[0]);
-    setCustomerData(fetchRespose.getUser);
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
   };
+
   useEffect(() => {
-    data();
+    getAdminProfile();
+    employeeCount();
   }, []);
 
   return (
@@ -48,14 +73,14 @@ const Page = () => {
             </button>*/}
             <span className="absolute right-0 top-5">
               <Link
-                href="/loggedInAdmin/customer/initialCheck"
+                href="/loggedInAdmin/employee/addEmployee"
                 className="bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-600"
               >
-                Add Loan User
+                Add New Employee
               </Link>
             </span>
             <div className="relative overflow-x-auto">
-              <CustomerTable customerData={customerData} />
+              <EmployeeTable employeeData={employee} />
             </div>
           </div>
         </main>

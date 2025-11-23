@@ -1,7 +1,7 @@
 "use client";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 export default function Page() {
   // Inputs

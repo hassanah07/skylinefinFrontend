@@ -33,7 +33,28 @@ function MonthTotals({ attendance, year, month }) {
     () => getMonthTotals(attendance, year, month),
     [attendance, year, month]
   );
-
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
   return (
     <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 text-sm">
       <div className="flex items-center gap-3">

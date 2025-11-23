@@ -1,8 +1,10 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
-import { FaUserEdit, FaPlusCircle } from "react-icons/fa";
+import { FaUserEdit, FaPlusCircle, FaRegCalendarPlus } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
+import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const CustomerTable = ({ customerData = [] }) => {
   // For debugging
@@ -46,6 +48,28 @@ const CustomerTable = ({ customerData = [] }) => {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
 
   return (
     <div className="mb-20">
@@ -126,6 +150,28 @@ const CustomerTable = ({ customerData = [] }) => {
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-4">
                           <Link
+                            href={`/loggedInAdmin/recurring/viewRecurring/${
+                              e.customerId ?? "-"
+                            }`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <GiPayMoney
+                              className="text-2xl"
+                              title="View Recurring"
+                            />
+                          </Link>
+                          <Link
+                            href={`/loggedInAdmin/loan/viewLoan/${
+                              e.customerId ?? "-"
+                            }`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <GiReceiveMoney
+                              className="text-2xl"
+                              title="View Loan"
+                            />
+                          </Link>
+                          <Link
                             href={`/loggedInAdmin/customer/profile/${e._id}`}
                             className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                           >
@@ -143,6 +189,15 @@ const CustomerTable = ({ customerData = [] }) => {
                               title="Process Loan"
                             />
                           </Link>
+                          {/* <Link
+                            href={`/loggedInAdmin/recurring/addRecurring/${e._id}`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <FaRegCalendarPlus
+                              className="text-2xl"
+                              title="Process Recurring"
+                            />
+                          </Link> */}
                         </div>
                       </td>
                     </tr>

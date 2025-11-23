@@ -12,43 +12,27 @@ const Page = ({ params }) => {
   // const router = useRouter();
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
+  // const [hide, setHide] = useState(true)
   //
-  const emailValidation = async () => {
-    let res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/emailValidation`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: mySlag }),
-      }
-    );
-    res = await res.json();
-    if (res.type != "success") {
-      toast.success(res.msg, toastOptions);
-      Router.push("/");
-    } else {
-      toast.success(res.msg, toastOptions);
-    }
-  };
-
-  useEffect(() => {
-    emailValidation();
-    const token = localStorage.getItem("token");
-    if (token) {
-      redirect("/loggedInAdmin/dashboard");
-    }
-  }, []);
 
   const [email, setEmail] = useState(mySlag);
   const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState(Number());
+  const [otp, setOtp] = useState();
   const handleChange = (e) => {
     if (e.target.name == "email") {
-      setEmail(e.target.value);
+      setEmail(
+        e.target.value
+          .trim()
+          .replace(/[^a-z0-9@]/g, "")
+          .slice(0, 30)
+      );
     } else if (e.target.name == "password") {
-      setPassword(e.target.value);
+      setPassword(
+        e.target.value
+          .trim()
+          .replace(/[^a-zA-Z0-9#_@]/g, "")
+          .slice(0, 16)
+      );
     } else if (e.target.name == "otp") {
       setOtp(e.target.value.slice(0, 6));
     }
@@ -92,6 +76,51 @@ const Page = ({ params }) => {
       toast.error(error, toastOptions);
     }
   };
+  const emailValidation = async () => {
+    let res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/emailValidation`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: mySlag }),
+      }
+    );
+    res = await res.json();
+    if (res.type != "success") {
+      toast.success(res.msg, toastOptions);
+      Router.push("/");
+    } else {
+      toast.success(res.msg, toastOptions);
+    }
+  };
+  const resetPassword = async (e) => {
+    let reset = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/resetPassword`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: mySlag }),
+      }
+    );
+    const res = await reset.json();
+    if (res.login != "success") {
+      toast.success(res.msg, toastOptions);
+    } else {
+      toast.success(res.msg, toastOptions);
+    }
+  };
+
+  useEffect(() => {
+    emailValidation();
+    const token = localStorage.getItem("token");
+    if (token) {
+      redirect("/loggedInAdmin/dashboard");
+    }
+  }, []);
   return (
     <div className="text-black body-font bg-white dark:bg-slate-700 dark:text-white flex items-center justify-center min-h-screen">
       <ToastContainer />
@@ -134,7 +163,7 @@ const Page = ({ params }) => {
                   />
                 </div>
               </div>
-              <div className="p-2 w-full">
+              <div className="p-2 w-full relative">
                 <div className="relative">
                   <label
                     htmlFor="password"
@@ -149,12 +178,18 @@ const Page = ({ params }) => {
                     value={password}
                     onChange={handleChange}
                     placeholder="password"
-                    className="w-full bg-transparent border border-gray-700 dark:border-white  dark:text-white focus:border-transparent focus:bg-transparent focus:ring-2 focus:ring-pink-400 outline-none font-semibold py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    className="w-full mb-5 bg-transparent border border-gray-700 dark:border-white  dark:text-white focus:border-transparent focus:bg-transparent focus:ring-2 focus:ring-pink-400 outline-none font-semibold py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     autoComplete="off"
                     autoSave="off"
                     aria-autocomplete="none"
                   />
                 </div>
+                <span
+                  className="absolute right-2 bottom-0 underline text-blue-700 cursor-pointer"
+                  onClick={resetPassword}
+                >
+                  Reset Password
+                </span>
               </div>
               <div className="p-2 w-full">
                 <div className="relative">
@@ -165,10 +200,10 @@ const Page = ({ params }) => {
                     OTP
                   </label>
                   <input
-                    type="otp"
+                    type="number"
                     id="otp"
                     name="otp"
-                    value={otp}
+                    value={otp || ""}
                     onChange={handleChange}
                     placeholder="otp"
                     className="w-full bg-transparent border border-gray-700 dark:border-white  dark:text-white focus:border-transparent focus:bg-transparent focus:ring-2 focus:ring-pink-400 outline-none font-semibold py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"

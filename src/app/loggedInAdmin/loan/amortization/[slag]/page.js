@@ -11,6 +11,7 @@ export default function LoanAmortizationPage({ params }) {
   const printableRef = useRef(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [btnDisable, setBtnDisable] = useState(false);
 
   const getData = async () => {
     try {
@@ -27,6 +28,7 @@ export default function LoanAmortizationPage({ params }) {
       );
 
       const json = await res.json();
+      console.log(json);
       if (json.status) {
         setData(json.data);
       } else {
@@ -37,6 +39,24 @@ export default function LoanAmortizationPage({ params }) {
     } finally {
       setLoading(false);
     }
+  };
+  const payNow = async (installmentNo, dueDate, amount) => {
+    const data = {
+      loanAccountNumber: mySlag,
+      isCustomer: true,
+      installmentNo,
+      amount,
+      dueDate,
+    };
+    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/adminTxn/txn`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "Application/json",
+        "admin-token": localStorage.getItem("token"),
+      },
+      body: JSON.stringify(data),
+    });
+    console.table(res);
   };
 
   useEffect(() => {
@@ -151,6 +171,8 @@ export default function LoanAmortizationPage({ params }) {
                           "Principal",
                           "Interest",
                           "Closing",
+                          "isOverdue",
+                          "#",
                         ].map((h) => (
                           <th
                             key={h}
@@ -162,10 +184,10 @@ export default function LoanAmortizationPage({ params }) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 bg-white">
-                      {data.schedule.map((row) => (
-                        <tr key={row.m} className="hover:bg-slate-50">
+                      {data.emiPayment.map((row, index) => (
+                        <tr key={index} className="hover:bg-slate-50">
                           <td className="px-4 py-2 text-sm text-slate-700">
-                            {row.m}
+                            {row.month}
                           </td>
                           <td className="px-4 py-2 text-sm text-slate-700">
                             ₹ {formatMoney(row.opening)}
@@ -182,6 +204,42 @@ export default function LoanAmortizationPage({ params }) {
                           <td className="px-4 py-2 text-sm text-slate-700">
                             ₹ {formatMoney(row.closing)}
                           </td>
+                          <td className="px-4 py-2 text-sm text-slate-700">
+                            {new Date(row.dueDate).getTime() < Date.now() ? (
+                              <span className="text-red-600 font-semibold text-red-600">
+                                Overdue
+                              </span>
+                            ) : (
+                              <span className="text-green-600 font-semibold">
+                                Ok
+                              </span>
+                            )}
+                          </td>
+                          {btnDisable === false ? (
+                            <td className="px-4 py-2 text-sm text-slate-700">
+                              {row.status === true ? (
+                                <div>tue</div>
+                              ) : (
+                                <div>false</div>
+                              )}
+                              {row.status === true ? (
+                                <button className="btn bg-purple-400 rounded p-1 px-2 text-black">
+                                  Paid
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn bg-red-600 rounded hover:bg-amber-500 p-1 px-2 text-white"
+                                  onClick={() =>
+                                    payNow(row.month - 1, row.dueDate, row.emi)
+                                  }
+                                >
+                                  Pay Now
+                                </button>
+                              )}
+                            </td>
+                          ) : (
+                            <td>...</td>
+                          )}
                         </tr>
                       ))}
                     </tbody>

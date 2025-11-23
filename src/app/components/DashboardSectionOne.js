@@ -1,8 +1,31 @@
 import React from "react";
 import { DashboardSectionOneAPI } from "@/app/api/DashboardSectionOneApi";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const DashboardSectionOne = () => {
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
   return (
     <div className="container px-5 py-24 mx-auto">
       <div className="flex flex-wrap w-full mb-20 items-center text-center">
@@ -33,9 +56,9 @@ const DashboardSectionOne = () => {
                 <div className="text-7xl border-l-4 absolute right-2 top-2">
                   {currElem.number}
                 </div>
-              <Link href={currElem.link}>
-                <span>View</span>
-              </Link>
+                <Link href={currElem.link}>
+                  <span>View</span>
+                </Link>
               </div>
             </div>
           );
