@@ -117,8 +117,9 @@ const EmployeeTable = ({ employeeData = [] }) => {
                           <Image
                             src="https://www.shutterstock.com/image-vector/beauty-face-woman-logo-vector-600nw-2493789517.jpg"
                             alt="image"
-                            className="rounded-full"
-                            fill
+                            className="rounded-full w-14"
+                            height={300}
+                            width={300}
                           />
                         </div>
                         <div>
