@@ -131,7 +131,7 @@ const Page = ({ params }) => {
         <div className="container px-5 mx-auto my-8 md:w-[70%] shadow-2xl shadow-popover-foreground dark:shadow-blue-400">
           <div className="flex flex-col text-center w-full relative gap-2">
             <Image
-              src="/Logo.png"
+              src="/logo.png"
               width={60}
               height={90}
               alt="logo"
