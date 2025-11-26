@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -46,12 +46,12 @@ const Page = () => {
     progress: undefined,
   };
 
-  const fetchPin = async () => {
+  const fetchPin = useCallback(async () => {
     let res = await fetch(`https://api.postalpincode.in/pincode/${form.pin}`);
     res = await res.json();
     console.log(res[0].PostOffice);
     setPostOffices(res[0].PostOffice);
-  };
+  }, [form.pin]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     let res = await fetch(
@@ -80,7 +80,7 @@ const Page = () => {
     if (form.pin?.length === 6) {
       fetchPin();
     }
-  }, [form.pin]);
+  }, [form.pin, fetchPin]);
 
   useEffect(() => {
     if (area) {

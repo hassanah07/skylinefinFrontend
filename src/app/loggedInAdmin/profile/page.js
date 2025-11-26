@@ -1,6 +1,7 @@
 "use client";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -249,10 +250,11 @@ export default function AdminProfilePage() {
                     title="Change profile photo"
                   >
                     {profile.avatar ? (
-                      <img
+                      <Image
                         src={profile.avatar}
                         alt="avatar"
                         className="w-full h-full object-cover"
+                        fill
                       />
                     ) : (
                       <span className="text-2xl font-medium text-gray-600">

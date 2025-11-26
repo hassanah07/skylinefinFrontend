@@ -1,6 +1,7 @@
 "use client";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { use, useEffect, useRef, useState } from "react";
 
@@ -12,36 +13,35 @@ export default function LoanAmortizationPage({ params }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const getData = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getCustomerAmortizationData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "admin-token": localStorage.getItem("token"),
-          },
-          body: JSON.stringify({ loanAccountNumber: mySlag }),
-        }
-      );
-
-      const json = await res.json();
-      if (json.status) {
-        setData(json.data);
-      } else {
-        console.error("Error:", json.msg);
-      }
-    } catch (err) {
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const getData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getCustomerAmortizationData`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "admin-token": localStorage.getItem("token"),
+            },
+            body: JSON.stringify({ loanAccountNumber: mySlag }),
+          }
+        );
+
+        const json = await res.json();
+        if (json.status) {
+          setData(json.data);
+        } else {
+          console.error("Error:", json.msg);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
     getData();
-  }, []);
+  }, [mySlag]);
 
   const formatMoney = (n) =>
     n == null
@@ -202,10 +202,11 @@ export default function LoanAmortizationPage({ params }) {
                   </table>
                 </div>
 
-                <img
+                <Image
                   src="/Logo.png"
                   alt="Watermark"
                   className="w-full absolute top-0 opacity-10 hidden print:block"
+                  fill
                 />
               </section>
 

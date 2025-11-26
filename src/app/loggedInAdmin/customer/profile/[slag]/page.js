@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
 import { FaCamera, FaSignature, FaTimes } from "react-icons/fa";
@@ -96,10 +97,11 @@ export default function ProfilePage() {
           <div className="w-full md:w-1/3 space-y-6">
             {/* Photo */}
             <div className="relative w-40 h-40 mx-auto border rounded-full overflow-hidden shadow-sm">
-              <img
+              <Image
                 src={user.photo}
                 alt="Profile"
                 className="object-cover w-full h-full"
+                fill
               />
               <label className="absolute bottom-2 right-2 bg-indigo-600 text-white p-2 rounded-full cursor-pointer hover:bg-indigo-700">
                 <FaCamera />
@@ -114,10 +116,11 @@ export default function ProfilePage() {
 
             {/* Signature */}
             <div className="border rounded-lg p-3 flex flex-col items-center bg-gray-50">
-              <img
+              <Image
                 src={user.signature}
                 alt="Signature"
                 className="w-44 h-20 object-contain border bg-white"
+                fill
               />
               <label className="mt-3 bg-amber-500 text-white px-3 py-2 rounded text-sm flex items-center gap-2 cursor-pointer hover:bg-amber-600">
                 <FaSignature /> Change Signature

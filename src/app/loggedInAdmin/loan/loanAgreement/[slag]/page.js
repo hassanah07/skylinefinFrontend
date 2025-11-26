@@ -2,8 +2,9 @@
 import SideBar from "@/app/components/SideBar";
 import SignatureFooter from "@/app/components/SignatureFooter";
 import TopBar from "@/app/components/TopBar";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 
 export default function Page({ params }) {
   const router = useRouter();
@@ -69,14 +70,15 @@ export default function Page({ params }) {
   const logoSrc = "/Logo.png";
 
   const Logo = () => (
-    <img
+    <Image
       src={logoSrc}
       alt="background_logo"
       aria-hidden="true"
       className="bg-logo"
+      fill
     />
   );
-  const getPersonalLoanAgreement = async () => {
+  const getPersonalLoanAgreement = useCallback(async () => {
     let res = await fetch(
       `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/personalLoanAgreement`,
       {
@@ -90,29 +92,10 @@ export default function Page({ params }) {
     );
     res = await res.json();
     setCustomerId(res.data.customerId);
-    console.log(res.data.customerId);
     setLoan(res.data);
-  };
+  }, [mySlag]);
 
-  const customerDetails = async () => {
-    let res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/customerDetails`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: JSON.stringify({ customerId: customerId }),
-      }
-    );
-    res = await res.json();
-    console.log(res.data);
-    setCustomer(res.data);
-    setDataSchedule(res.data.schedule);
-  };
-
-  const getEmiData = async () => {
+  const getEmiData = useCallback(async () => {
     let res = await fetch(
       `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/getEmiDataWithLoanId`,
       {
@@ -125,18 +108,33 @@ export default function Page({ params }) {
       }
     );
     res = await res.json();
-    console.log(res);
     setData(res);
-  };
+  }, [mySlag]);
   useEffect(() => {
     getEmiData();
-  }, [mySlag]);
+  }, [getEmiData]);
 
   useEffect(() => {
     getPersonalLoanAgreement();
-  }, []); // runs once
+  }, [getPersonalLoanAgreement]); // runs once
 
   useEffect(() => {
+    const customerDetails = async () => {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/customerDetails`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ customerId: customerId }),
+        }
+      );
+      res = await res.json();
+      setCustomer(res.data);
+      setDataSchedule(res.data.schedule);
+    };
     if (customerId) {
       customerDetails();
     }
@@ -928,7 +926,7 @@ export default function Page({ params }) {
                 <p className="text-sm">
                   Repayment shall be by electronic debit (ECS/auto
                   debit/standing instruction), cheque, UPI or direct credit to
-                  the Lender's designated account.
+                  the Lender&apos;s designated account.
                 </p>
               </div>
               <SignatureFooter borrower={customer.fullName} />
@@ -997,7 +995,7 @@ export default function Page({ params }) {
                   </li>
                   <li>
                     There are no pending legal proceedings which would
-                    materially affect the Borrower's ability to repay.
+                    materially affect the Borrower&apos;s ability to repay.
                   </li>
                   <li>No Event of Default has occurred or is continuing.</li>
                 </ol>
@@ -1239,45 +1237,6 @@ export default function Page({ params }) {
                   referred to herein, constitutes the entire agreement between
                   the parties and supersedes all prior arrangements.
                 </p>
-
-                <div className="mt-6 grid grid-cols-2 gap-8">
-                  <div className="text-sm">
-                    <div className="text-gray-600">Borrower</div>
-                    <div className="mt-6">
-                      <div className="font-medium uppercase">
-                        {customer.fullName ||
-                          "|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|"}
-                      </div>
-                      <div className="text-gray-600">
-                        Signature: ______________________
-                      </div>
-                      <div className="text-gray-600 mt-1">
-                        Date: __________________________
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-sm">
-                    <div className="text-gray-600">
-                      For and on behalf of Lender
-                    </div>
-                    <div className="mt-6">
-                      <div className="font-medium">Authorized Signatory</div>
-                      <div className="text-gray-600">
-                        Signature: ______________________
-                      </div>
-                      <div className="text-gray-600 mt-1">
-                        Date: __________________________
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 text-xs text-gray-500">
-                  This is a sample agreement for demonstration purposes only.
-                  The actual loan agreement terms, fees and legal wording will
-                  vary and should be reviewed by legal counsel before use.
-                </div>
               </div>
               <SignatureFooter borrower={customer.fullName} />
             </div>

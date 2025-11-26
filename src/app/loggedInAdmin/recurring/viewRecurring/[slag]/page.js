@@ -35,8 +35,30 @@ const Page = ({ params }) => {
   };
 
   useEffect(() => {
+    const data = async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/recurring/getRecurringUsers`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ customerId: mySlag }),
+        }
+      );
+      const fetchRespose = await res.json();
+      if (fetchRespose.login === true) {
+        setCustomerRecurringData(fetchRespose.getUser);
+      } else {
+        setCustomerRecurringData([]);
+        setTimeout(() => {
+          localStorage.removeItem("token");
+        }, 3000);
+      }
+    };
     data();
-  }, []);
+  }, [mySlag]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black">

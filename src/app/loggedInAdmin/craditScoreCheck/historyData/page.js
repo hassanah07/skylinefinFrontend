@@ -50,7 +50,7 @@ const Page = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(
+    const data = {
       f_name,
       l_name,
       aadhar_no,
@@ -63,31 +63,11 @@ const Page = () => {
       confirm_password,
       phone,
       experience,
-      role
-    );
+      role,
+    };
+    console.log(data);
   };
-  const getAdminProfile = async () => {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        // body: JSON.stringify({ email }),
-      }
-    );
-    response = await response.json();
-    if (response.login === false) {
-      localStorage.removeItem("token");
-      redirect("/");
-    } else {
-    }
-  };
-  useEffect(() => {
-    getAdminProfile();
-  }, []);
+
   return (
     <div>
       <form className="max-w-lg mx-auto relative">

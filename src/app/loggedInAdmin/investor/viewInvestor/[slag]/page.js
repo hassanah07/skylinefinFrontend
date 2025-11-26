@@ -2,6 +2,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 const Page = ({ params }) => {
   // const [employee, setEmployee] = useState(null);
   const router = useRouter();
@@ -75,10 +76,11 @@ const Page = ({ params }) => {
         <section className="bg-slate-400 rounded-lg overflow-hidden shadow-accent-foreground shadow-2xl">
           <div className="p-6 flex flex-col md:flex-row gap-6">
             <div className="flex-shrink-0">
-              <img
+              <Image
                 src={employee.avatar}
                 alt={employee.name}
                 className="w-28 h-28 rounded-full object-cover border"
+                fill
               />
             </div>
 

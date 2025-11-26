@@ -1,12 +1,12 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import { redirect, useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
   const optionsOccupation = [
@@ -61,20 +61,21 @@ const page = ({ params }) => {
     );
     setAreaTwo(selectedTwo || null);
   };
-  const fetchPin = async () => {
+  const fetchPin = useCallback(async () => {
     let res = await fetch(
       `https://api.postalpincode.in/pincode/${formData.pin}`
     );
     res = await res.json();
     setPostOffices(res[0].PostOffice);
-  };
-  const fetchPinTwo = async () => {
+  }, [formData.pin]);
+
+  const fetchPinTwo = useCallback(async () => {
     let res = await fetch(
       `https://api.postalpincode.in/pincode/${formData.permPin}`
     );
     res = await res.json();
     setPostOfficesTwo(res[0].PostOffice);
-  };
+  }, [formData.permPin]);
 
   const toastOptions = {
     theme: "dark",
@@ -130,7 +131,7 @@ const page = ({ params }) => {
         }, 4000);
       }
     } catch (error) {
-      toast.error("Please Reload this page", toastOptions);
+      toast.error("Please Reload this Page", toastOptions);
     }
   };
 
@@ -138,7 +139,7 @@ const page = ({ params }) => {
     if (formData.pin?.length === 6) {
       fetchPin();
     }
-  }, [formData.pin]);
+  }, [formData.pin, fetchPin]);
   useEffect(() => {
     if (area) {
       setFormData((prev) => ({ ...prev, postalData: area }));
@@ -148,7 +149,7 @@ const page = ({ params }) => {
     if (formData.permPin?.length === 6) {
       fetchPinTwo();
     }
-  }, [formData.permPin]);
+  }, [formData.permPin, fetchPinTwo]);
   useEffect(() => {
     if (areaTwo) {
       setFormData((prev) => ({ ...prev, permPostalData: areaTwo }));
@@ -551,4 +552,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;

@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
-import { redirect, useRouter } from "next/navigation";
+import React, { useState, useEffect, use, useMemo } from "react";
+import { redirect } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
@@ -9,11 +9,8 @@ import { Router } from "lucide-react";
 import Image from "next/image";
 
 const Page = ({ params }) => {
-  // const router = useRouter();
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
-  // const [hide, setHide] = useState(true)
-  //
 
   const [email, setEmail] = useState(mySlag);
   const [password, setPassword] = useState("");
@@ -37,18 +34,21 @@ const Page = ({ params }) => {
       setOtp(e.target.value.slice(0, 6));
     }
   };
-  const toastOptions = {
-    theme: "dark",
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  };
+  const toastOptions = useMemo(
+    () => ({
+      theme: "dark",
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    }),
+    []
+  );
+
   const handleSubmit = async (e) => {
-    // redirect("/loggedInAdmin/home");
     e.preventDefault();
     const data = { email, password, otp };
     console.log(data);
@@ -61,11 +61,9 @@ const Page = ({ params }) => {
         body: JSON.stringify(data),
       });
       res = await res.json();
-      // console.log(res);
       if (res.authtoken) {
         localStorage.setItem("token", res.authtoken);
         toast.success("Yup! Logged In", toastOptions);
-        // location.reload();
         setTimeout(() => {
           redirect("/loggedInAdmin/dashboard");
         }, 2000);
@@ -76,25 +74,7 @@ const Page = ({ params }) => {
       toast.error(error, toastOptions);
     }
   };
-  const emailValidation = async () => {
-    let res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/emailValidation`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: mySlag }),
-      }
-    );
-    res = await res.json();
-    if (res.type != "success") {
-      toast.success(res.msg, toastOptions);
-      Router.push("/");
-    } else {
-      toast.success(res.msg, toastOptions);
-    }
-  };
+
   const resetPassword = async (e) => {
     let reset = await fetch(
       `${process.env.NEXT_PUBLIC_HOST}/api/admin/resetPassword`,
@@ -115,12 +95,35 @@ const Page = ({ params }) => {
   };
 
   useEffect(() => {
+    const emailValidation = async () => {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/admin/emailValidation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: mySlag }),
+        }
+      );
+      res = await res.json();
+      if (res.type != "success") {
+        toast.success(res.msg, toastOptions);
+        redirect("/");
+      } else {
+        toast.success(res.msg, toastOptions);
+      }
+    };
     emailValidation();
+  }, [mySlag, toastOptions]);
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       redirect("/loggedInAdmin/dashboard");
     }
   }, []);
+
   return (
     <div className="text-black body-font bg-white dark:bg-slate-700 dark:text-white flex items-center justify-center min-h-screen">
       <ToastContainer />

@@ -2,17 +2,14 @@
 import CustomerLoanTable from "@/app/components/CustomerLoanTable";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 
 const Page = ({ params }) => {
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
-
-  const router = useRouter();
   const [customerLoanData, setCustomerLoanData] = useState([]);
-  const data = async () => {
+
+  const data = useCallback(async () => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getCustomerLoans`,
       {
@@ -26,30 +23,10 @@ const Page = ({ params }) => {
     );
     const fetchRespose = await res.json();
     setCustomerLoanData(fetchRespose.data);
-  };
-  const getAdminProfile = async () => {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        // body: JSON.stringify({ email }),
-      }
-    );
-    response = await response.json();
-    if (response.login === false) {
-      localStorage.removeItem("token");
-      redirect("/");
-    } else {
-    }
-  };
+  }, [mySlag]);
   useEffect(() => {
-    getAdminProfile();
     data();
-  }, []);
+  }, [data]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black">

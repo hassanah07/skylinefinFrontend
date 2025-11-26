@@ -4,6 +4,7 @@ import { FaUserEdit } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 const EmployeeTable = ({ employeeData = [] }) => {
   const [query, setQuery] = useState("");
@@ -11,6 +12,7 @@ const EmployeeTable = ({ employeeData = [] }) => {
   const pageSize = 5;
 
   // employee datas
+  console.log(employeeData.getData);
 
   const employees = useMemo(() => employeeData || [], [employeeData]);
   // reset page when data changes
@@ -112,10 +114,11 @@ const EmployeeTable = ({ employeeData = [] }) => {
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
-                          <img
+                          <Image
                             src="https://www.shutterstock.com/image-vector/beauty-face-woman-logo-vector-600nw-2493789517.jpg"
                             alt="image"
                             className="rounded-full"
+                            fill
                           />
                         </div>
                         <div>

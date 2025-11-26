@@ -65,11 +65,11 @@ export default function CustomerLoanDetails({ params }) {
               <span className="font-medium">Name:</span> {customerData.fullName}
             </p>
             <p>
-              <span className="font-medium">Father's Name:</span>{" "}
+              <span className="font-medium">Father&apos;s Name:</span>{" "}
               {customerData.fatherName}
             </p>
             <p>
-              <span className="font-medium">Mother's Name:</span>{" "}
+              <span className="font-medium">Mother&apos;s Name:</span>{" "}
               {customerData.motherName}
             </p>
             <p>

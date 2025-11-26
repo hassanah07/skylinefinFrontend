@@ -1,8 +1,9 @@
 "use client";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { use, useCallback, useEffect, useRef, useState } from "react";
 
 export default function LoanAmortizationPage({ params }) {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function LoanAmortizationPage({ params }) {
   const [loading, setLoading] = useState(true);
   const [btnDisable, setBtnDisable] = useState(false);
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getCustomerAmortizationData`,
@@ -28,18 +29,17 @@ export default function LoanAmortizationPage({ params }) {
       );
 
       const json = await res.json();
-      console.log(json);
       if (json.status) {
         setData(json.data);
       } else {
-        console.error("Error:", json.msg);
+        // console.error("Error:", json.msg);
       }
     } catch (err) {
-      console.error("Fetch error:", err);
+      // console.error("Fetch error:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [mySlag]);
   const payNow = async (installmentNo, dueDate, amount) => {
     const data = {
       loanAccountNumber: mySlag,
@@ -56,12 +56,12 @@ export default function LoanAmortizationPage({ params }) {
       },
       body: JSON.stringify(data),
     });
-    console.table(res);
+    // console.table(res);
   };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [getData]);
 
   const formatMoney = (n) =>
     n == null
@@ -218,11 +218,6 @@ export default function LoanAmortizationPage({ params }) {
                           {btnDisable === false ? (
                             <td className="px-4 py-2 text-sm text-slate-700">
                               {row.status === true ? (
-                                <div>tue</div>
-                              ) : (
-                                <div>false</div>
-                              )}
-                              {row.status === true ? (
                                 <button className="btn bg-purple-400 rounded p-1 px-2 text-black">
                                   Paid
                                 </button>
@@ -230,7 +225,7 @@ export default function LoanAmortizationPage({ params }) {
                                 <button
                                   className="btn bg-red-600 rounded hover:bg-amber-500 p-1 px-2 text-white"
                                   onClick={() =>
-                                    payNow(row.month - 1, row.dueDate, row.emi)
+                                    payNow(row.month, row.dueDate, row.emi)
                                   }
                                 >
                                   Pay Now
@@ -260,10 +255,11 @@ export default function LoanAmortizationPage({ params }) {
                   </table>
                 </div>
 
-                <img
+                <Image
                   src="/Logo.png"
                   alt="Watermark"
                   className="w-full absolute top-0 opacity-10 hidden print:block"
+                  fill
                 />
               </section>
 

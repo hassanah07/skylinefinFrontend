@@ -6,14 +6,11 @@ import { redirect, useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const page = ({ params }) => {
-  const router = useRouter()
+const Page = ({ params }) => {
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
   const [isCompanyYes, setIsCompanyYes] = useState(false);
   const [isCompanyNo, setIsCompanyNo] = useState(true);
-  const [disabledYes, setDisabledYes] = useState(false);
-  const [disabledNo, setDisabledNo] = useState(true);
   const [formData, setFormData] = useState({
     id: mySlag,
     isCompany: isCompanyYes,
@@ -45,14 +42,10 @@ const page = ({ params }) => {
     if (isCompanyYes === false) {
       setIsCompanyYes(true);
       setIsCompanyNo(false);
-      setDisabledYes(true);
-      setDisabledNo(false);
       setFormData({ ...formData, isCompany: true });
     } else if (isCompanyNo === false) {
       setIsCompanyYes(false);
       setIsCompanyNo(true);
-      setDisabledNo(true);
-      setDisabledYes(false);
       setFormData({ ...formData, isCompany: false });
     }
   };
@@ -84,7 +77,7 @@ const page = ({ params }) => {
     //     toast.error(`${data.msg}`, toastOptions);
     //   }
     // } catch (error) {
-    //   toast.error("Please Reload this page", toastOptions);
+    //   toast.error("Please Reload this Page", toastOptions);
     // }
     alert("Comming Soon");
   };
@@ -100,7 +93,6 @@ const page = ({ params }) => {
               <h2 className="text-2xl font-bold uppercase text-center mb-8">
                 Step II
               </h2>
-              
             </div>
           </div>
         </main>
@@ -109,4 +101,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;

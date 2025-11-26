@@ -34,7 +34,7 @@ export default function Modal() {
                         </div>
                         
                         <div className="mb-6 space-y-4">
-                            <p className="text-gray-600">Welcome to our modal! Here's some sample content:</p>
+                            <p className="text-gray-600">Welcome to our modal! Here some sample content:</p>
                             <div className="bg-blue-100 p-4 rounded-lg">
                                 <ul className="list-disc list-inside space-y-2 text-gray-700">
                                     <li>Feature 1: Amazing stuff</li>

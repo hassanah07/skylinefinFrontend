@@ -1,6 +1,7 @@
 "use client";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState, useEffect } from "react";
 
@@ -64,11 +65,12 @@ export default function RecurringCalculator() {
   }, [mode, payment, goal, ratePerPeriod, totalPeriods]);
   const logoSrc = "/Logo.png";
   const Logo = () => (
-    <img
+    <Image
       src={logoSrc}
       alt="background_logo"
       aria-hidden="true"
       className="bg-logo fixed w-[80vw] top-24 opacity-10 z-0"
+      fill
     />
   );
 

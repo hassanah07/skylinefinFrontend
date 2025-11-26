@@ -6,7 +6,7 @@ import { redirect, useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const router = useRouter();
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
@@ -89,7 +89,7 @@ const page = ({ params }) => {
         }, 4000);
       }
     } catch (error) {
-      toast.error("Please Reload this page", toastOptions);
+      toast.error("Please Reload this Page", toastOptions);
     }
   };
   return (
@@ -468,4 +468,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;

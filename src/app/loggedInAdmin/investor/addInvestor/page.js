@@ -2,7 +2,7 @@
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -64,13 +64,13 @@ export default function LoanApplicationForm() {
     draggable: true,
     progress: undefined,
   };
-  const fetchPin = async () => {
+  const fetchPin = useCallback(async () => {
     let res = await fetch(
       `https://api.postalpincode.in/pincode/${formData.pin}`
     );
     res = await res.json();
     setPostOffices(res[0].PostOffice);
-  };
+  }, [formData.pin]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,7 +113,7 @@ export default function LoanApplicationForm() {
     if (formData.pin?.length === 6) {
       fetchPin();
     }
-  }, [formData.pin]);
+  }, [formData.pin, fetchPin]);
   useEffect(() => {
     if (area) {
       setFormData((prev) => ({ ...prev, postalData: area }));

@@ -6,7 +6,7 @@ import { redirect, useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const router = useRouter();
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
@@ -468,4 +468,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;

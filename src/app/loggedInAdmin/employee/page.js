@@ -25,8 +25,7 @@ const Page = () => {
         }
       );
       res = await res.json();
-      console.log(res);
-      setEmployee(res);
+      setEmployee(res.getData);
     } catch (error) {
       console.log(error);
     }

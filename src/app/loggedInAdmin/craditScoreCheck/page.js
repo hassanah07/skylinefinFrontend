@@ -37,29 +37,6 @@ export default function Page() {
     description:
       "Detailed credit-check item for verifying financial history. Contains secure data and next steps for admin review.",
   };
-
-  const getAdminProfile = async () => {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        // body: JSON.stringify({ email }),
-      }
-    );
-    response = await response.json();
-    if (response.login === false) {
-      localStorage.removeItem("token");
-      redirect("/");
-    } else {
-    }
-  };
-  useEffect(() => {
-    getAdminProfile();
-  }, []);
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black">
       <TopBar />

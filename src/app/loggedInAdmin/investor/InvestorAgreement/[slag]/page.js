@@ -2,6 +2,7 @@
 import SideBar from "@/app/components/SideBar";
 import SignatureFooter from "@/app/components/SignatureFooter";
 import TopBar from "@/app/components/TopBar";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { use, useEffect, useState } from "react";
 
@@ -69,94 +70,73 @@ export default function Page({ params }) {
   const logoSrc = "/Logo.png";
 
   const Logo = () => (
-    <img
+    <Image
       src={logoSrc}
       alt="background_logo"
       aria-hidden="true"
       className="bg-logo"
+      fill
     />
   );
-  const getPersonalLoanAgreement = async () => {
-    let res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/personalLoanAgreement`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: JSON.stringify({ id: mySlag }),
-      }
-    );
-    res = await res.json();
-    setCustomerId(res.data.customerId);
-    console.log(res.data.customerId);
-    setLoan(res.data);
-  };
 
-  const customerDetails = async () => {
-    let res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/customerDetails`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: JSON.stringify({ customerId: customerId }),
-      }
-    );
-    res = await res.json();
-    console.log(res.data);
-    setCustomer(res.data);
-    setDataSchedule(res.data.schedule);
-  };
-
-  const getEmiData = async () => {
-    let res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/getEmiDataWithLoanId`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: JSON.stringify({ id: mySlag }),
-      }
-    );
-    res = await res.json();
-    console.log(res);
-    setData(res);
-  };
-  const getAdminProfile = async () => {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        // body: JSON.stringify({ email }),
-      }
-    );
-    response = await response.json();
-    if (response.login === false) {
-      localStorage.removeItem("token");
-      redirect("/");
-    } else {
-    }
-  };
   useEffect(() => {
+    const getEmiData = async () => {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/getEmiDataWithLoanId`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ id: mySlag }),
+        }
+      );
+      res = await res.json();
+      console.log(res);
+      setData(res);
+    };
     getEmiData();
   }, [mySlag]);
 
   useEffect(() => {
-    getAdminProfile();
+    const getPersonalLoanAgreement = async () => {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/personalLoanAgreement`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ id: mySlag }),
+        }
+      );
+      res = await res.json();
+      setCustomerId(res.data.customerId);
+      setLoan(res.data);
+    };
     getPersonalLoanAgreement();
-  }, []); // runs once
+  }, [mySlag]); // runs once
 
   useEffect(() => {
+    const customerDetails = async () => {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/v2/customerDetails`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ customerId: customerId }),
+        }
+      );
+      res = await res.json();
+      console.log(res.data);
+      setCustomer(res.data);
+      setDataSchedule(res.data.schedule);
+    };
     if (customerId) {
       customerDetails();
     }
@@ -948,7 +928,7 @@ export default function Page({ params }) {
                 <p className="text-sm">
                   Repayment shall be by electronic debit (ECS/auto
                   debit/standing instruction), cheque, UPI or direct credit to
-                  the Lender's designated account.
+                  the Lender&apos;s designated account.
                 </p>
               </div>
               <SignatureFooter borrower={customer.fullName} />
@@ -1017,7 +997,7 @@ export default function Page({ params }) {
                   </li>
                   <li>
                     There are no pending legal proceedings which would
-                    materially affect the Borrower's ability to repay.
+                    materially affect the Borrower&apos;s ability to repay.
                   </li>
                   <li>No Event of Default has occurred or is continuing.</li>
                 </ol>

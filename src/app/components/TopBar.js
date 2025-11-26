@@ -1,7 +1,30 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 
 const TopBar = () => {
+  const getAdminProfile = async () => {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        // body: JSON.stringify({ email }),
+      }
+    );
+    response = await response.json();
+    if (response.login === false) {
+      localStorage.removeItem("token");
+      redirect("/");
+    } else {
+    }
+  };
+  useEffect(() => {
+    getAdminProfile();
+  }, []);
   return (
     <>
       <header className="flex items-center justify-between bg-white dark:bg-slate-700 shadow px-4 py-3 text-black dark:text-white shadow-2xl">

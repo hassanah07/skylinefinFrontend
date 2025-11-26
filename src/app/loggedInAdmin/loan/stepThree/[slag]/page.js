@@ -7,7 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const router = useRouter();
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
@@ -59,7 +59,7 @@ const page = ({ params }) => {
         toast.error(`${data.msg}`, toastOptions);
       }
     } catch (error) {
-      toast.error("Please Reload this page", toastOptions);
+      toast.error("Please Reload this Page", toastOptions);
     }
   };
   return (
@@ -235,4 +235,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;
