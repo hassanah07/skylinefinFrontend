@@ -157,21 +157,12 @@ const InvestorTable = ({ investorData = [] }) => {
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-4">
                           <Link
-                            href={`/loggedInAdmin/customer/profile/${e._id}`}
+                            href={`/loggedInAdmin/investor/edit/${e._id}`}
                             className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                           >
                             <FaUserEdit
                               className="text-2xl"
-                              title="Edit Customer Profile"
-                            />
-                          </Link>
-                          <Link
-                            href={`/loggedInAdmin/loan/stepOne/${e._id}`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <FaPlusCircle
-                              className="text-2xl"
-                              title="Process Loan"
+                              title="Edit Profile"
                             />
                           </Link>
                         </div>
