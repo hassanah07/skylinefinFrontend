@@ -256,7 +256,7 @@ export default function LoanAmortizationPage({ params }) {
                 </div>
 
                 <Image
-                  src="/Logo.png"
+                  src="/Logo.PNG"
                   alt="Watermark"
                   className="w-full absolute top-0 opacity-10 hidden print:block"
                   fill

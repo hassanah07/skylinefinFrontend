@@ -67,7 +67,7 @@ export default function Page({ params }) {
     }).format(n);
 
   // Replace /logo.png with your actual logo path or a base64 data URL.
-  const logoSrc = "/Logo.png";
+  const logoSrc = "/Logo.PNG";
 
   const Logo = () => (
     <Image

@@ -5,7 +5,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ModeToggle } from "@/components/ModeToggle";
 import Image from "next/image";
-import logo from "../../../public/Logo.PNG";
 
 const Page = () => {
   const router = useRouter();
