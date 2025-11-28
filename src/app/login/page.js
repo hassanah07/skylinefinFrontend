@@ -65,14 +65,15 @@ const Page = () => {
         <div className="container px-5 mx-auto my-8 md:w-[70%] shadow-2xl shadow-popover-foreground dark:shadow-blue-400">
           <div className="flex flex-col text-center w-full relative gap-2">
             <Image
-              src="/logo.PNG"
+              src="/logo.PNG
+              "
               width={60}
               height={90}
               alt="logo"
               className="absolute top-4 left-4 rounded-lg p-1 dark:bg-amber-50"
             />
             <h1 className="sm:text-4xl text-3xl font-extrabold title-font my-4 text-gray-700 dark:text-slate-100">
-              Skylinee Admin
+              Skylinee Login
             </h1>
           </div>
           <hr />
