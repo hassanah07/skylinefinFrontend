@@ -5,6 +5,8 @@ import TopBar from "@/app/components/TopBar";
 import SideBar from "@/app/components/SideBar";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 export default function DocViewer({ params }) {
   const { slag } = use(params);
@@ -50,7 +52,7 @@ export default function DocViewer({ params }) {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-black">
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <TopBar />
       <div className="flex relative">
         <SideBar />

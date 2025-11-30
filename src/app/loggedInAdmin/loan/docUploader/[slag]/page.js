@@ -4,6 +4,7 @@ import Image from "next/image";
 import TopBar from "@/app/components/TopBar";
 import SideBar from "@/app/components/SideBar";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function DocUploader({ params }) {
   const [file, setFile] = useState(null);
