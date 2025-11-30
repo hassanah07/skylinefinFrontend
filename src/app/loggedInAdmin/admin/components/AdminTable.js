@@ -1,26 +1,22 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
-import { FaUserEdit, FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import Image from "next/image";
 
-const InvestorTable = ({ investorData = [] }) => {
-  // For debugging
-  // console.log(investorData);
-
+const AdminTable = ({ admin = [] }) => {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
-  // Keep customers derived from props
-  const customers = useMemo(() => investorData || [], [investorData]);
+  // Keep Admins derived from props
+  const customers = useMemo(() => admin || [], [admin]);
 
   // reset page when data changes
   useEffect(() => {
     setPage(1);
-  }, [investorData]);
+  }, [admin]);
 
   // normalize query once
   const q = query.trim().toLowerCase();
@@ -51,35 +47,12 @@ const InvestorTable = ({ investorData = [] }) => {
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const getAdminProfile = async () => {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        // body: JSON.stringify({ email }),
-      }
-    );
-    response = await response.json();
-    if (response.login === false) {
-      localStorage.removeItem("token");
-      redirect("/");
-    } else {
-    }
-  };
-  useEffect(() => {
-    getAdminProfile();
-  }, []);
-
   return (
     <div className="mb-20">
       <div className="lg:col-span-2 bg-white dark:bg-gray-500 border rounded-lg shadow-sm p-4">
         {/* Header + Search */}
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-medium mb-3 uppercase">Investor Data</h2>
+          <h2 className="text-lg font-medium mb-3 uppercase">Admin Data</h2>
           <div className="relative">
             <input
               value={query}
@@ -100,10 +73,8 @@ const InvestorTable = ({ investorData = [] }) => {
             <thead>
               <tr className="text-sm">
                 <th className="py-2 px-3">Name</th>
-                {/* <th className="py-2 px-3">Father&apos;s Name</th> */}
-                <th className="py-2 px-3">Investor ID</th>
-                <th className="py-2 px-3">Inv. Amount</th>
-                <th className="py-2 px-3">Profit %</th>
+                <th className="py-2 px-3">Email ID</th>
+                <th className="py-2 px-3">Mobile No</th>
                 <th className="py-2 px-3">Actions</th>
               </tr>
             </thead>
@@ -133,47 +104,22 @@ const InvestorTable = ({ investorData = [] }) => {
                             height={200}
                             className="w-10 h-10 rounded-md items-center justify-center"
                           />
-
                           <div>
                             <div className="font-medium uppercase">
-                              {e.firstName || "-"}&nbsp;
-                              {e.lastName || "-"}
+                              {e.name || "-"}
                             </div>
                           </div>
                         </div>
                       </td>
-                      {/* <td className="py-3 px-3 text-sm uppercase">
-                        {e.fatherName || "-"}
-                      </td> */}
-                      <td className="py-3 px-3">
-                        <Link
-                          href={`/loggedInAdmin/loan/viewLoan/${
-                            e.investorId ?? "-"
-                          }`}
-                        >
-                          {e.investorId ?? "-"}
-                        </Link>
-                      </td>
-                      <td className="py-3 px-3 text-sm">{e.amount ?? "-"}</td>
-                      <td className="py-3 px-3 text-sm">
-                        {e.profitPercentage ?? "-"}
-                      </td>
+                      <td className="py-3 px-3 text-sm">{e.email ?? "-"}</td>
+                      <td className="py-3 px-3 text-sm">{e.mobile ?? "-"}</td>
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-4">
                           <Link
-                            href={`/loggedInAdmin/investor/view/${e._id}`}
+                            href={`/loggedInAdmin/admin/view/${e._id}`}
                             className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                           >
-                            <FaUser className="text-xl" title="View Profile" />
-                          </Link>
-                          <Link
-                            href={`/loggedInAdmin/investor/edit/${e._id}`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <FaUserEdit
-                              className="text-2xl"
-                              title="Edit Profile"
-                            />
+                            <FaUser className="text-2xl" title="Edit Profile" />
                           </Link>
                         </div>
                       </td>
@@ -216,4 +162,4 @@ const InvestorTable = ({ investorData = [] }) => {
   );
 };
 
-export default InvestorTable;
+export default AdminTable;

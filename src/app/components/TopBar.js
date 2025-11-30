@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import React, { useEffect } from "react";
 
 const TopBar = () => {

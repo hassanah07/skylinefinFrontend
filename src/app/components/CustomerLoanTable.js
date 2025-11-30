@@ -1,6 +1,12 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
-import { FaTrashAlt, FaCalculator, FaThList, FaPrint } from "react-icons/fa";
+import {
+  FaTrashAlt,
+  FaCalculator,
+  FaThList,
+  FaPrint,
+  FaCloudDownloadAlt,
+} from "react-icons/fa";
 import { LuView } from "react-icons/lu";
 import { TiTickOutline } from "react-icons/ti";
 import { CiSearch } from "react-icons/ci";
@@ -8,6 +14,7 @@ import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { redirect, useRouter } from "next/navigation";
+import { FaCloudUploadAlt } from "react-icons/fa";
 
 const CustomerLoanTable = ({ customerLoanData = [] }) => {
   const router = useRouter();
@@ -141,6 +148,7 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
       <ToastContainer />
       <div className="lg:col-span-2 bg-white dark:bg-gray-500 border rounded-lg shadow-sm p-4">
         {/* Header + Search */}
+
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-medium mb-3 uppercase">
             <button
@@ -173,6 +181,7 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                 {/* <th className="py-2 px-3">CIF</th> */}
                 <th className="py-2 px-3">Loan A/C</th>
                 <th className="py-2 px-3">Amount</th>
+                <th className="py-2 px-3">Files</th>
                 <th className="py-2 px-3">Type</th>
                 <th className="py-2 px-3">Calc</th>
                 <th className="py-2 px-3">Amortization</th>
@@ -196,15 +205,6 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                       key={key}
                       className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
                     >
-                      {/* <td className="py-3 px-3">
-                        <div className="flex items-center gap-3">
-                          <div>
-                            <div className="font-medium uppercase">
-                              {e.customerId || "-"}
-                            </div>
-                          </div>
-                        </div>
-                      </td> */}
                       <td className="py-3 px-3 text-sm uppercase">
                         <Link
                           href={`/loggedInAdmin/loan/statement/${e.loanAccountNumber}`}
@@ -212,7 +212,29 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                           {e.loanAccountNumber || "-"}
                         </Link>
                       </td>
-                      <td className="py-3 px-3">{e.amount ?? "-"}</td>
+                      <td className="py-3 px-3">
+                        <Link
+                          href={`/loggedInAdmin/loan/viewCustomerLoan/${e._id}`}
+                        >
+                          {e.amount ?? "-"}
+                        </Link>
+                      </td>
+                      <td className="py-3 px-3 flex gap-3">
+                        <Link href={`/loggedInAdmin/loan/docUploader/${e._id}`}>
+                          <FaCloudUploadAlt
+                            className="text-3xl"
+                            title="Upload"
+                          />
+                        </Link>
+                        <Link
+                          href={`/loggedInAdmin/loan/docViewer/${e.loanAccountNumber}`}
+                        >
+                          <FaCloudDownloadAlt
+                            className="text-3xl"
+                            title="Download"
+                          />
+                        </Link>
+                      </td>
                       <td className="py-3 px-3">{e.loanType ?? "-"}</td>
 
                       <td className="py-3 px-3">
@@ -365,7 +387,8 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                             e.stepSeven === true &&
                             e.stepEight === true && (
                               <Link
-                                href={`/loggedInAdmin/loan/viewCustomerLoan/${e._id}`}
+                                // href={`/loggedInAdmin/loan/viewCustomerLoan/${e._id}`}
+                                href="#"
                                 className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                               >
                                 <LuView

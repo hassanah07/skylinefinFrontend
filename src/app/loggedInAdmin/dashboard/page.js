@@ -12,6 +12,7 @@ import { useState, useMemo, useEffect } from "react";
 
 export default function AdminDashboard() {
   // const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [admin, setAdmin] = useState(0);
   const [employee, setEmployee] = useState(0);
   const [customer, setCustomer] = useState(0);
   const [marhcant, setMarhcant] = useState(0);
@@ -21,6 +22,30 @@ export default function AdminDashboard() {
   const [pendingRecurring, setPendingRecurring] = useState(0);
   const [investor, setInvestor] = useState(0);
 
+  const adminCount = async () => {
+    try {
+      let res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/tellyCount/adminCount`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify(),
+        }
+      );
+      res = await res.json();
+      console.log(res);
+      if (res.login === true) {
+        setAdmin(res.getData.length);
+      } else {
+        localStorage.removeItem("token");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const employeeCount = async () => {
     try {
       let res = await fetch(
@@ -198,6 +223,7 @@ export default function AdminDashboard() {
   };
   useEffect(() => {
     data();
+    adminCount();
     customerCount();
     employeeCount();
     loanCount();
@@ -220,6 +246,7 @@ export default function AdminDashboard() {
           {/* Metrics */}
           <DashMain
             telly={{
+              admin: admin,
               employee: employee.length,
               customer: customer,
               // marhcant: marhcant.length,

@@ -129,15 +129,15 @@ const Page = () => {
               <div className="p-2 w-full">
                 {butnLoadning === false ? (
                   <button
-                    className="cursor-pointer dark:text-white border-2 bg-yellow-600 dark:bg-slate-600 py-2 px-8 focus:outline-none hover:bg-yellow-500 hover:text-pink-900 dark:hover:bg-red-700 text-lg font-semibold shadow-2xl w-full justify-center rounded-md hover:border-0"
+                    className="cursor-pointer dark:text-white border-2 bg-yellow-600 dark:bg-slate-600 py-2 px-8 focus:outline-none hover:bg-yellow-500 hover:text-pink-900 dark:hover:bg-red-700 text-lg font-semibold shadow-2xl w-full justify-center rounded-md hover:border-2"
                     onClick={handleSubmit}
                   >
                     Request OTP
                   </button>
                 ) : (
                   <button
-                    className="cursor-pointer dark:text-white border-2 bg-yellow-600 dark:bg-slate-600 py-2 px-8 focus:outline-none hover:bg-yellow-500 hover:text-pink-900 dark:hover:bg-red-700 text-lg font-semibold shadow-2xl w-full justify-center rounded-md hover:border-0"
-                    onClick={handleSubmit}
+                    className="cursor-pointer dark:text-white border-2 bg-yellow-600 dark:bg-slate-600 py-2 px-8 focus:outline-none hover:bg-yellow-500 hover:text-pink-900 dark:hover:bg-red-700 text-lg font-semibold shadow-2xl w-full justify-center rounded-md hover:border-2"
+                    disabled
                   >
                     Sending OTP...
                   </button>

@@ -9,7 +9,6 @@ import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [customerData, setCustomerData] = useState([]);
-  const salary = 250000;
   const router = useRouter();
   const data = async () => {
     const res = await fetch(
@@ -58,14 +57,14 @@ const Page = () => {
         <SideBar />
         <main className="flex-1 p-6">
           <div className="sm:rounded-lg w-full mx-auto pt-16 relative">
-            {/* <button
-              className="absolute left-0 top-0 bg-red-500 text-white px-4 py-2 rounded m-4 text-xl hover:bg-blue-600"
+            <button
+              className="absolute left-0 top-0 bg-white text-white px-4 py-2 rounded m-4 text-xl hover:bg-blue-600"
               onClick={() => {
                 router.back();
               }}
             >
               🔙
-            </button>*/}
+            </button>
             <span className="absolute right-0 top-5">
               <Link
                 href="/loggedInAdmin/customer/initialCheck"

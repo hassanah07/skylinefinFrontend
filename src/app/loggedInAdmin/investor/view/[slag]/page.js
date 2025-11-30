@@ -6,7 +6,7 @@ import SideBar from "@/app/components/SideBar";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-export default function AdminDetailPage({ params }) {
+export default function InvestorDetailPage({ params }) {
   const router = useRouter();
   const { slag } = use(params);
   const [admin, setAdmin] = useState({
@@ -15,8 +15,11 @@ export default function AdminDetailPage({ params }) {
     name: "John Doe",
     email: "john@example.com",
     mobile: "+91 9876543210",
+    amount: 0,
     pan: "ABCDE1234F",
-    aadhar: "1234 5678 9012",
+    aadhaar: "1234 5678 9012",
+    address: "123 Main St, City",
+    status: false,
   });
 
   const [photo, setPhoto] = useState(null);
@@ -114,7 +117,7 @@ export default function AdminDetailPage({ params }) {
     formData.append("id", slag); // must match upload.single("photo")
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/image/custphoto`,
+      `${process.env.NEXT_PUBLIC_HOST}/api/image/invphoto`,
       {
         method: "POST",
         headers: {
@@ -139,7 +142,7 @@ export default function AdminDetailPage({ params }) {
     formData.append("id", slag); // must match upload.single("sign")
 
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/image/custsign`,
+      `${process.env.NEXT_PUBLIC_HOST}/api/image/invsign`,
       {
         method: "POST",
         headers: {
@@ -157,7 +160,7 @@ export default function AdminDetailPage({ params }) {
   useEffect(() => {
     const access = async () => {
       const data = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getLoanUser`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/investor/getInvestorDetail`,
         {
           method: "POST",
           headers: {
@@ -172,11 +175,14 @@ export default function AdminDetailPage({ params }) {
       setAdmin({
         photo: res.getData?.image || "",
         sign: res.getData?.sign || "",
-        name: res.getData?.fullName || "John Doe",
+        name: res.getData?.name || "John Doe",
         email: res.getData?.email || "john@example.com",
-        mobile: res.getData?.mobile || "+91 9876123456",
+        mobile: res.getData?.mobile || "+91 9876543210",
+        amount: res.getData?.amount || 0,
         pan: res.getData?.pan || "ABCDE1234F",
-        aadhar: res.getData?.aadhaar || "1234 5678 9012",
+        aadhaar: res.getData?.aadhaar || "1234 5678 9012",
+        address: res.getData?.address || "123 Main St, City",
+        status: res.getData?.status || false,
       });
     };
     access();
@@ -196,7 +202,7 @@ export default function AdminDetailPage({ params }) {
             >
               🔙
             </span>
-            <h1 className="text-3xl font-bold mb-8 ml-16">Admin Details</h1>
+            <h1 className="text-3xl font-bold mb-8 ml-16">Investor Profile</h1>
 
             {/* Photo Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -260,21 +266,8 @@ export default function AdminDetailPage({ params }) {
                     <p className="text-lg font-semibold">{admin.mobile}</p>
                   </div>
                   <div>
-                    <p className="text-sm">Role</p>
-                    <p className="text-lg font-semibold">{admin.role}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm">Status</p>
-                    <p
-                      className={`text-lg font-semibold ${
-                        admin.status === true
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {admin.status === true && <>Active</>}
-                      {admin.status === false && <>Inactive</>}
-                    </p>
+                    <p className="text-sm">Invested Amount</p>
+                    <p className="text-lg font-semibold">{admin.amount}</p>
                   </div>
                 </div>
               </div>
@@ -288,10 +281,15 @@ export default function AdminDetailPage({ params }) {
               </div>
               <div>
                 <p className="text-sm">Aadhaar No</p>
-                <p className="text-lg font-semibold">{admin.aadhar}</p>
+                <p className="text-lg font-semibold">{admin.aadhaar}</p>
               </div>
             </div>
 
+            {/* Address */}
+            <div className="mb-8">
+              <p className="text-sm">Address</p>
+              <p className="text-lg font-semibold">{admin.address}</p>
+            </div>
 
             {/* Signature Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -341,6 +339,8 @@ export default function AdminDetailPage({ params }) {
                 </div>
               </div>
             </div>
+
+            {/* Action Buttons */}
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { CiSearch } from "react-icons/ci";
 import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 const CustomerTable = ({ customerData = [] }) => {
   // For debugging
@@ -91,6 +92,8 @@ const CustomerTable = ({ customerData = [] }) => {
               ) : (
                 paginated.map((e, index) => {
                   const key = e.id ?? e.customerId ?? index;
+                  const host = process.env.NEXT_PUBLIC_HOST?.replace(/\/$/, "");
+                  const img = e?.image?.replace(/^\//, "");
                   return (
                     <tr
                       key={key}
@@ -98,17 +101,23 @@ const CustomerTable = ({ customerData = [] }) => {
                     >
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
-                            {(e.fullName || e.name || "")
-                              .split(" ")
-                              .map((x) => x[0])
-                              .slice(0, 2)
-                              .join("")}
-                          </div>
+                          <Image
+                            src={`${host}/${img}`}
+                            alt="Profile Photo"
+                            width={200}
+                            height={200}
+                            className="w-10 h-10 rounded-md items-center justify-center"
+                          />
+
                           <div>
-                            <div className="font-medium uppercase">
-                              {e.fullName || e.name || "-"}
-                            </div>
+                            <Link
+                              href={`/loggedInAdmin/customer/profile/${e._id}`}
+                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            >
+                              <div className="font-medium uppercase">
+                                {e.fullName || e.name || "-"}
+                              </div>
+                            </Link>
                           </div>
                         </div>
                       </td>
@@ -127,7 +136,7 @@ const CustomerTable = ({ customerData = [] }) => {
                       <td className="py-3 px-3 text-sm">{e.mobile ?? "-"}</td>
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-4">
-                          <Link
+                          {/* <Link
                             href={`/loggedInAdmin/recurring/viewRecurring/${
                               e.customerId ?? "-"
                             }`}
@@ -137,7 +146,7 @@ const CustomerTable = ({ customerData = [] }) => {
                               className="text-2xl"
                               title="View Recurring"
                             />
-                          </Link>
+                          </Link> */}
                           <Link
                             href={`/loggedInAdmin/loan/viewLoan/${
                               e.customerId ?? "-"
@@ -147,15 +156,6 @@ const CustomerTable = ({ customerData = [] }) => {
                             <GiReceiveMoney
                               className="text-2xl"
                               title="View Loan"
-                            />
-                          </Link>
-                          <Link
-                            href={`/loggedInAdmin/customer/profile/${e._id}`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <FaUserEdit
-                              className="text-2xl"
-                              title="Edit Customer Profile"
                             />
                           </Link>
                           <Link

@@ -6,6 +6,19 @@ const nextConfig = {
         protocol: "https",
         hostname: "www.shutterstock.com",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "7000", // optional, since you are using custom port
+      },
+      {
+        protocol: "https",
+        hostname: process.env.NEXT_PUBLIC_HOST?.replace("https://", "").replace(
+          "http://",
+          ""
+        ),
+        pathname: "/uploads/**",
+      },
     ],
   },
 };

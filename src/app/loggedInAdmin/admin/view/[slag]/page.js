@@ -16,7 +16,11 @@ export default function AdminDetailPage({ params }) {
     email: "john@example.com",
     mobile: "+91 9876543210",
     pan: "ABCDE1234F",
-    aadhar: "1234 5678 9012",
+    aadhaar: "1234 5678 9012",
+    address: "123 Main St, City",
+    role: "Super Admin",
+    status: false,
+    isSuperAdmin: true,
   });
 
   const [photo, setPhoto] = useState(null);
@@ -26,6 +30,7 @@ export default function AdminDetailPage({ params }) {
   const [signPreview, setSignPreview] = useState();
   const fileInputRef = useRef(null);
   const signatureInputRef = useRef(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   const compressImage = async (file) => {
     return new Promise((resolve) => {
@@ -113,16 +118,13 @@ export default function AdminDetailPage({ params }) {
     formData.append("photo", photo); // must match upload.single("photo")
     formData.append("id", slag); // must match upload.single("photo")
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/image/custphoto`,
-      {
-        method: "POST",
-        headers: {
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: formData,
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/image/photo`, {
+      method: "POST",
+      headers: {
+        "admin-token": localStorage.getItem("token"),
+      },
+      body: formData,
+    });
 
     const data = await res.json();
     toast.info(`${data.msg}`);
@@ -138,26 +140,69 @@ export default function AdminDetailPage({ params }) {
     formData.append("sign", signature); // must match upload.single("sign")
     formData.append("id", slag); // must match upload.single("sign")
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/image/custsign`,
-      {
-        method: "POST",
-        headers: {
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: formData,
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/image/sign`, {
+      method: "POST",
+      headers: {
+        "admin-token": localStorage.getItem("token"),
+      },
+      body: formData,
+    });
 
     const data = await res.json();
     console.log(data);
     toast.info(`${data.msg}`);
   };
 
-  useEffect(() => {
-    const access = async () => {
-      const data = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getLoanUser`,
+  const enableAdmin = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/enableadmin`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ id: slag }),
+      }
+    );
+    const rep = await res.json();
+    toast.info(rep.msg);
+  };
+
+  const disableAdmin = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/disableadmin`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ id: slag }),
+      }
+    );
+    const rep = await res.json();
+    toast.info(rep.msg);
+  };
+  const disableSuperAdmin = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/admin/disablemakesuperadmin`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ id: slag }),
+      }
+    );
+    const rep = await res.json();
+    toast.info(rep.msg);
+  };
+  const makeSuperAdmin = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/admin/makesuperadmin`,
         {
           method: "POST",
           headers: {
@@ -167,20 +212,61 @@ export default function AdminDetailPage({ params }) {
           body: JSON.stringify({ id: slag }),
         }
       );
+      const rep = await res.json();
+      toast.info(rep.msg);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const access = async () => {
+      const data = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetailbyid`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "Application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ adminId: slag }),
+        }
+      );
       const res = await data.json();
       console.log(res.getData);
       setAdmin({
         photo: res.getData?.image || "",
         sign: res.getData?.sign || "",
-        name: res.getData?.fullName || "John Doe",
+        name: res.getData?.name || "John Doe",
         email: res.getData?.email || "john@example.com",
-        mobile: res.getData?.mobile || "+91 9876123456",
+        mobile: res.getData?.mobile || "+91 9876543210",
         pan: res.getData?.pan || "ABCDE1234F",
-        aadhar: res.getData?.aadhaar || "1234 5678 9012",
+        aadhaar: res.getData?.aadhaar || "1234 5678 9012",
+        address: res.getData?.address || "123 Main St, City",
+        role: res.getData?.role || "Admin",
+        status: res.getData?.status || false,
+        isSuperAdmin: res.getData?.isSuperAdmin || "Active",
       });
     };
     access();
   }, [slag]);
+  useEffect(() => {
+    const admin = async () => {
+      const data = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "Application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+        }
+      );
+      const res = await data.json();
+      setIsSuperAdmin(res.authUser.isSuperAdmin);
+    };
+    admin();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-slate-800">
@@ -288,10 +374,15 @@ export default function AdminDetailPage({ params }) {
               </div>
               <div>
                 <p className="text-sm">Aadhaar No</p>
-                <p className="text-lg font-semibold">{admin.aadhar}</p>
+                <p className="text-lg font-semibold">{admin.aadhaar}</p>
               </div>
             </div>
 
+            {/* Address */}
+            <div className="mb-8">
+              <p className="text-sm">Address</p>
+              <p className="text-lg font-semibold">{admin.address}</p>
+            </div>
 
             {/* Signature Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -340,6 +431,57 @@ export default function AdminDetailPage({ params }) {
                   </button>
                 </div>
               </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex w-4/4 gap-2">
+              {isSuperAdmin === true && (
+                <>
+                  {admin?.status === true && (
+                    <div className="flex w-1/4 flex-col md:flex-row gap-4">
+                      <button
+                        onClick={disableAdmin}
+                        disabled={admin.status === "Disabled"}
+                        className="flex-1 bg-red-500 p-2 hover:bg-red-600 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition"
+                      >
+                        Disable Admin
+                      </button>
+                    </div>
+                  )}
+                  {admin?.status === false && (
+                    <div className="flex w-1/4 flex-col md:flex-row gap-4">
+                      <button
+                        onClick={disableAdmin}
+                        disabled={admin.status === "Disabled"}
+                        className="flex-1 bg-red-500 p-2 hover:bg-red-600 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition"
+                      >
+                        Enable Admin
+                      </button>
+                    </div>
+                  )}
+                  {admin.isSuperAdmin === true ? (
+                    <div className="flex w-1/4 flex-col md:flex-row gap-4">
+                      <button
+                        onClick={disableSuperAdmin}
+                        disabled={admin.status === "Disabled"}
+                        className="flex-1 bg-red-500 p-2 hover:bg-red-600 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition"
+                      >
+                        Disable Super Admin
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex w-1/4 flex-col md:flex-row gap-4">
+                      <button
+                        onClick={makeSuperAdmin}
+                        disabled={admin.status === "Disabled"}
+                        className="flex-1 bg-red-500 p-2 hover:bg-red-600 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition"
+                      >
+                        Make Super Admin
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
