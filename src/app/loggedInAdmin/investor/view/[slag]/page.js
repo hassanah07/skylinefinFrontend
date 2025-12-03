@@ -12,6 +12,7 @@ export default function InvestorDetailPage({ params }) {
   const [admin, setAdmin] = useState({
     photo: "/default-avatar.png",
     sign: "/default-avatar.png",
+    title: "Mr/Miss",
     name: "John Doe",
     email: "john@example.com",
     mobile: "+91 9876543210",
@@ -20,6 +21,8 @@ export default function InvestorDetailPage({ params }) {
     aadhaar: "1234 5678 9012",
     address: "123 Main St, City",
     status: false,
+    isBranch: false,
+    branchId: false,
   });
 
   const [photo, setPhoto] = useState(null);
@@ -175,14 +178,18 @@ export default function InvestorDetailPage({ params }) {
       setAdmin({
         photo: res.getData?.image || "",
         sign: res.getData?.sign || "",
-        name: res.getData?.name || "John Doe",
+        title: res.getData?.title || "",
+        name:
+          `${res.getData?.firstName} ${res.getData?.lastName}` || "John Doe",
         email: res.getData?.email || "john@example.com",
-        mobile: res.getData?.mobile || "+91 9876543210",
+        mobile: res.getData?.phone || "+91 9876543210",
         amount: res.getData?.amount || 0,
         pan: res.getData?.pan || "ABCDE1234F",
         aadhaar: res.getData?.aadhaar || "1234 5678 9012",
         address: res.getData?.address || "123 Main St, City",
         status: res.getData?.status || false,
+        isBranch: res.getData?.isBranch || false,
+        branchId: res.getData?.branchId || "123 123 123",
       });
     };
     access();
@@ -255,7 +262,9 @@ export default function InvestorDetailPage({ params }) {
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm">Name</p>
-                    <p className="text-lg font-semibold">{admin.name}</p>
+                    <p className="text-lg font-semibold">
+                      {admin.title}. {admin.name}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm">Email ID</p>
@@ -269,6 +278,12 @@ export default function InvestorDetailPage({ params }) {
                     <p className="text-sm">Invested Amount</p>
                     <p className="text-lg font-semibold">{admin.amount}</p>
                   </div>
+                  {admin.isBranch === true && (
+                    <div>
+                      <p className="text-sm">Branch Id</p>
+                      <p className="text-lg font-semibold">{admin.branchId}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -7,23 +7,16 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function InvestorEditForm({ params }) {
+  const router = useRouter();
   const { slag } = use(params);
   const myslag = decodeURIComponent(slag);
-  const router = useRouter();
-  const [postOffices, setPostOffices] = useState([]);
-  const [area, setArea] = useState(null); // will store the full selected object
   const [isBranch, setisBranch] = useState(false);
   const [isBranchNo, setIsBranchNo] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isDisabledNo, setIsDisabledNo] = useState(true);
-  const [investorData, setInvestorData] = useState([]);
-  const handleChange = (e) => {
-    const selected = postOffices.find(
-      (office) => office.Name === e.target.value
-    );
-    setArea(selected || null);
-  };
+
   const [formData, setFormData] = useState({
+    id: slag,
     title: "",
     f_name: "",
     l_name: "",
@@ -36,11 +29,11 @@ export default function InvestorEditForm({ params }) {
     voter: "",
     address: "",
     landmark: "",
-    postalData: null,
     email: "@gmail.com",
     mobile: "",
     amount: "",
     profitPercentage: 12,
+    branchId: "",
     isBranch: isBranch,
   });
   const handleBranch = () => {
@@ -67,19 +60,14 @@ export default function InvestorEditForm({ params }) {
     draggable: true,
     progress: undefined,
   };
-  const fetchPin = useCallback(async () => {
-    let res = await fetch(
-      `https://api.postalpincode.in/pincode/${formData.pin}`
-    );
-    res = await res.json();
-    setPostOffices(res[0].PostOffice);
-  }, [formData.pin]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
+
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/investor/addInvestor`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/investor/editInvestor`,
         {
           method: "POST",
           headers: {
@@ -104,40 +92,47 @@ export default function InvestorEditForm({ params }) {
         }, 4000);
       } else {
         toast.error(`${data.msg}`, toastOptions);
-        // // setTimeout(() => {
-        // //   router.push("/loggedInAdmin/investor");
-        // // }, 4000);
       }
     } catch (error) {
       toast.error("Please Reload this page", toastOptions);
     }
   };
-  useEffect(() => {
-    if (formData.pin?.length === 6) {
-      fetchPin();
-    }
-  }, [formData.pin, fetchPin]);
-  useEffect(() => {
-    if (area) {
-      setFormData((prev) => ({ ...prev, postalData: area }));
-    }
-  }, [area]);
 
   useEffect(() => {
     const getData = async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/investor/getInvestor`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/investor/getInvestorDetail`,
         {
           method: "POST",
           headers: {
             "Content-Type": "Application/json",
             "admin-token": localStorage.getItem("token"),
           },
-          body: JSON.stringify(myslag),
+          body: JSON.stringify({ id: myslag }),
         }
       );
       const response = await res.json();
-      setInvestorData(response.data);
+      setFormData((prev) => ({
+        ...prev,
+        id: myslag,
+        title: response.getData?.title || "",
+        f_name: response.getData?.firstName || "",
+        l_name: response.getData?.lastName || "",
+        fatherName: response.getData?.father || "",
+        motherName: response.getData?.mother || "",
+        spouseName: response.getData?.spouse || "",
+        dob: response.getData?.dob || "",
+        pan: response.getData?.pan || "",
+        aadhar: response.getData?.aadhar || "",
+        voter: response.getData?.voter || "",
+        address: response.getData?.address || "",
+        landmark: response.getData?.landmark || "",
+        email: response.getData?.email || "",
+        mobile: response.getData?.phone || "",
+        amount: response.getData?.amount || "",
+        profitPercentage: response.getData?.profitPercentage || "",
+        branchId: response.getData?.branchId,
+      }));
     };
     getData();
   }, [myslag]);
@@ -149,10 +144,16 @@ export default function InvestorEditForm({ params }) {
       <div className="flex relative">
         <SideBar />
         <main className="flex-1 p-6">
+          <span
+            className="bg-amber-300 px-2 py-1 rounded ml-4 cursor-pointer"
+            onClick={() => router.back()}
+          >
+            🔙
+          </span>
           <div className="max-w-3xl mx-auto">
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6">
               <h2 className="text-2xl font-bold uppercase text-center mb-8">
-                Add Investor Form
+                Edit Investor Form
               </h2>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -426,61 +427,6 @@ export default function InvestorEditForm({ params }) {
                       Landmark
                     </label>
                   </div>
-                  <div className="grid md:grid-cols-2 md:gap-6">
-                    <div className="relative z-0 w-full mb-5 group">
-                      <input
-                        type="number"
-                        name="pin"
-                        id="pin"
-                        value={formData.pin || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            pin: e.target.value.slice(0, 6),
-                          })
-                        }
-                        onKeyDown={(e) => {
-                          if (
-                            e.key === "ArrowUp" ||
-                            e.key === "ArrowDown" ||
-                            e.key === "e" ||
-                            e.key === "E"
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                        className="block py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                        placeholder=" "
-                        required
-                      />
-                      <label
-                        htmlFor="pin"
-                        className="peer-focus:font-medium absolute text-md text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                      >
-                        PIN
-                      </label>
-                    </div>
-                    <div className="relative z-0 w-full mb-5 group">
-                      <select
-                        id="postOfficeSelect"
-                        className="block py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                        required
-                        value={area?.Name || ""}
-                        onChange={handleChange}
-                      >
-                        <option value="">Choose Post Office</option>
-                        {postOffices?.map((office, index) => (
-                          <option
-                            className="dark:bg-black"
-                            key={index}
-                            value={office.Name}
-                          >
-                            {office.Name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
 
                   <div>
                     <label className="block text-sm font-medium">
@@ -594,6 +540,7 @@ export default function InvestorEditForm({ params }) {
                       %
                     </span>
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium">
                       Is this a Branch?
@@ -605,7 +552,13 @@ export default function InvestorEditForm({ params }) {
                           value=""
                           className="sr-only peer"
                           checked={isBranch}
-                          onChange={() => handleBranch()}
+                          onChange={() => {
+                            handleBranch(),
+                              setFormData((prev) => ({
+                                ...prev,
+                                isBranch: true,
+                              }));
+                          }}
                           disabled={isDisabled}
                         />
                         <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
@@ -619,7 +572,13 @@ export default function InvestorEditForm({ params }) {
                           value=""
                           className="sr-only peer"
                           checked={isBranchNo}
-                          onChange={() => handleBranch()}
+                          onChange={() => {
+                            handleBranch(),
+                              setFormData((prev) => ({
+                                ...prev,
+                                isBranch: false,
+                              }));
+                          }}
                           disabled={isDisabledNo}
                         />
                         <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
@@ -637,7 +596,7 @@ export default function InvestorEditForm({ params }) {
                     className="w-1/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300"
                     onClick={handleSubmit}
                   >
-                    Submit Application
+                    Update Profile
                   </button>
                 </div>
               </form>
