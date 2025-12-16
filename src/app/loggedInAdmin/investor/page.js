@@ -44,7 +44,7 @@ const Page = () => {
                 href="/loggedInAdmin/investor/initialCheck"
                 className="bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-600"
               >
-                Add New Investor
+                Add New Branch
               </Link>
             </span>
             <div className="relative overflow-x-auto">

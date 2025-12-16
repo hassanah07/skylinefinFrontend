@@ -1,6 +1,5 @@
 "use client";
 import { use, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import TopBar from "@/app/components/TopBar";
 import SideBar from "@/app/components/SideBar";
@@ -85,7 +84,7 @@ const Page = ({ params }) => {
         );
         if (res.ok) res = await res.json();
         setEmployeeData(res.employee);
-        setPostalData(res.employee.postalData);
+        
       } catch (e) {
         // ignore - we'll use mock
       }
@@ -133,9 +132,10 @@ const Page = ({ params }) => {
                 <div className="flex-shrink-0">
                   <Image
                     src="https://www.shutterstock.com/image-vector/beauty-face-woman-logo-vector-600nw-2493789517.jpg"
-                    alt={employeeData?.f_name}
+                    alt="ImageofEmploye"
                     className="w-28 h-28 rounded-full object-cover border"
-                    fill
+                    width={300}
+                    height={300}
                   />
                 </div>
 

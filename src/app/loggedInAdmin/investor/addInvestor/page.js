@@ -130,7 +130,7 @@ export default function LoanApplicationForm() {
           <div className="max-w-3xl mx-auto">
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6">
               <h2 className="text-2xl font-bold uppercase text-center mb-8">
-                Add Investor Form
+                Create Branch
               </h2>
 
               <form className="space-y-6">

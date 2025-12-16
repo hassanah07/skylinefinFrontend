@@ -144,7 +144,7 @@ const EmployeeTable = ({ employeeData = [] }) => {
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-2">
                         <Link
-                          href={`/loggedInAdmin/employee/viewEmployee/${e._id}`}
+                          href={`/loggedInAdmin/employee/view/${e._id}`}
                           className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                         >
                           <FaUserEdit className="text-2xl" />

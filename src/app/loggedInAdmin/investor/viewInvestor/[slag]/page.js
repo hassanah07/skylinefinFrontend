@@ -54,7 +54,7 @@ const Page = ({ params }) => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Investor Details</h1>
+            <h1 className="text-2xl font-semibold">Branch Details</h1>
             <p className="text-sm">Admin view — ID: {employee.id}</p>
           </div>
           <div className="flex gap-2">

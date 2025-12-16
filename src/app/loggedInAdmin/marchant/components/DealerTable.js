@@ -2,114 +2,33 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FaUserEdit } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
-import { redirect } from "next/navigation";
 
-const MarchantTable = () => {
+const DealerTable = ({ dealerData = [] }) => {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+
   const pageSize = 5;
 
   // employee datas
 
-  const employees = useMemo(
-    () => [
-      {
-        id: 1,
-        name: "Alice Johnson",
-        role: "HR Manager",
-        email: "alice@example.com",
-        status: "Active",
-      },
-      {
-        id: 2,
-        name: "Bob Smith",
-        role: "Manager",
-        email: "bob@example.com",
-        status: "Active",
-      },
-      {
-        id: 3,
-        name: "Anowarul Hassan",
-        role: "MERN Developer",
-        email: "contact@hassan.dev",
-        status: "Present",
-      },
-      {
-        id: 4,
-        name: "David Lee",
-        role: "Field Officer",
-        email: "david@example.com",
-        status: "Active",
-      },
-      {
-        id: 5,
-        name: "Eve Turner",
-        role: "EMI Collector",
-        email: "eve@example.com",
-        status: "Active",
-      },
-      {
-        id: 6,
-        name: "Frank Wu",
-        role: "Loan Processor",
-        email: "frank@example.com",
-        status: "Active",
-      },
-      {
-        id: 7,
-        name: "Asmot Ali",
-        role: "Recruiter",
-        email: "asmot@eskylineefinance.com",
-        status: "Active",
-      },
-      {
-        id: 8,
-        name: "Hiro Tanaka",
-        role: "Sales Executive",
-        email: "hiro@example.com",
-        status: "Active",
-      },
-    ],
-    []
-  );
+  const dealers = useMemo(() => dealerData || [], [dealerData]);
 
-  const filtered = employees.filter(
+  const filtered = dealers.filter(
     (e) =>
       e.name.toLowerCase().includes(query.toLowerCase()) ||
       e.email.toLowerCase().includes(query.toLowerCase()) ||
-      e.role.toLowerCase().includes(query.toLowerCase())
+      e.email.toLowerCase().includes(query.toLowerCase()) ||
+      e.location.toLowerCase().includes(query.toLowerCase())
   );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const getAdminProfile = async () => {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/admin/getadmindetail`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "admin-token": localStorage.getItem("token"),
-        },
-        // body: JSON.stringify({ email }),
-      }
-    );
-    response = await response.json();
-    if (response.login === false) {
-      localStorage.removeItem("token");
-      redirect("/");
-    } else {
-    }
-  };
-  useEffect(() => {
-    getAdminProfile();
-  }, []);
   return (
     <>
       <div className="lg:col-span-2 bg-white dark:bg-gray-500 border rounded-lg shadow-sm p-4">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-medium mb-3">Marchant</h2>
+          <h2 className="text-lg font-medium mb-3">Dealer Data</h2>
           <div className="relative">
             <input
               value={query}
@@ -123,11 +42,11 @@ const MarchantTable = () => {
             <CiSearch className="text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <button className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-              New Marchant
+              Create New Dealer
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -223,7 +142,7 @@ const MarchantTable = () => {
   );
 };
 
-export default MarchantTable;
+export default DealerTable;
 
 function statusColor(status) {
   if (status === "Active") return "bg-green-100 text-green-700";

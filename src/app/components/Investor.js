@@ -79,7 +79,7 @@ const InvestorTable = ({ investorData = [] }) => {
       <div className="lg:col-span-2 bg-white dark:bg-gray-500 border rounded-lg shadow-sm p-4">
         {/* Header + Search */}
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-medium mb-3 uppercase">Investor Data</h2>
+          <h2 className="text-lg font-medium mb-3 uppercase">Branch Data</h2>
           <div className="relative">
             <input
               value={query}
@@ -102,6 +102,7 @@ const InvestorTable = ({ investorData = [] }) => {
                 <th className="py-2 px-3">Name</th>
                 {/* <th className="py-2 px-3">Father&apos;s Name</th> */}
                 <th className="py-2 px-3">Investor ID</th>
+                <th className="py-2 px-3">Branch ID</th>
                 <th className="py-2 px-3">Inv. Amount</th>
                 <th className="py-2 px-3">Profit %</th>
                 <th className="py-2 px-3">Actions</th>
@@ -152,6 +153,15 @@ const InvestorTable = ({ investorData = [] }) => {
                           }`}
                         >
                           {e.investorId ?? "-"}
+                        </Link>
+                      </td>
+                      <td className="py-3 px-3">
+                        <Link
+                          href={`/loggedInAdmin/loan/viewLoan/${
+                            e.investorId ?? "-"
+                          }`}
+                        >
+                          {e.branchId ?? "-"}
                         </Link>
                       </td>
                       <td className="py-3 px-3 text-sm">{e.amount ?? "-"}</td>

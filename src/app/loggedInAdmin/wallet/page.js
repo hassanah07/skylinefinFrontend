@@ -266,9 +266,15 @@ export default function Page() {
                       }}
                       className="px-3 py-2 border rounded-md"
                     >
-                      <option value="all">All</option>
-                      <option value="income">Income</option>
-                      <option value="expense">Expense</option>
+                      <option value="all" className="dark:bg-gray-700">
+                        All
+                      </option>
+                      <option value="income" className="dark:bg-gray-700">
+                        Income
+                      </option>
+                      <option value="expense" className="dark:bg-gray-700">
+                        Expense
+                      </option>
                     </select>
                     <input
                       type="date"
@@ -347,7 +353,7 @@ export default function Page() {
                         className={`px-4 py-3 text-sm font-medium text-right ${
                           tx.type === "income"
                             ? "text-green-600"
-                            : "text-red-600"
+                            : "text-red-600 dark:text-gray-300"
                         }`}
                       >
                         {tx.type === "income" ? "+" : "-"}
@@ -411,7 +417,7 @@ export default function Page() {
             className="absolute inset-0 bg-black opacity-30"
             onClick={() => setModal(null)}
           />
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 z-10">
+          <div className="bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md p-6 z-10">
             <h2 className="text-lg font-medium mb-4">
               {modal === "add"
                 ? "Add Funds"
@@ -421,7 +427,9 @@ export default function Page() {
             </h2>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm text-gray-600">Amount</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300">
+                  Amount
+                </label>
                 <input
                   autoFocus
                   value={form.amount}
@@ -435,7 +443,9 @@ export default function Page() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-600">Note</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300">
+                  Note
+                </label>
                 <input
                   value={form.note}
                   onChange={(e) =>
@@ -446,8 +456,8 @@ export default function Page() {
               </div>
               {modal === "transfer" && (
                 <div>
-                  <label className="block text-sm text-gray-600">
-                    Target (email or id)
+                  <label className="block text-sm text-gray-600 dark:text-gray-300">
+                    Target (Customer Id)
                   </label>
                   <input
                     value={form.target}
@@ -463,7 +473,7 @@ export default function Page() {
             <div className="mt-6 flex justify-end gap-2">
               <button
                 onClick={() => setModal(null)}
-                className="px-3 py-2 bg-gray-100 rounded-md"
+                className="px-3 py-2 bg-red-500 rounded-md"
               >
                 Cancel
               </button>
@@ -471,7 +481,7 @@ export default function Page() {
                 onClick={() => handleSubmit(modal)}
                 className={`px-3 py-2 rounded-md text-white ${
                   modal === "add"
-                    ? "bg-green-600"
+                    ? "bg-green-500"
                     : modal === "withdraw"
                     ? "bg-red-600"
                     : "bg-blue-600"

@@ -5,11 +5,14 @@ import TopBar from "@/app/components/TopBar";
 import SideBar from "@/app/components/SideBar";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AdminDetailPage({ params }) {
   const router = useRouter();
   const { slag } = use(params);
   const [admin, setAdmin] = useState({
+    id: "",
+    customerId: "",
     photo: "/default-avatar.png",
     sign: "/default-avatar.png",
     name: "John Doe",
@@ -170,6 +173,8 @@ export default function AdminDetailPage({ params }) {
       const res = await data.json();
       console.log(res.getData);
       setAdmin({
+        id: res.getData?._id || "",
+        customerId: res.getData?.customerId || "",
         photo: res.getData?.image || "",
         sign: res.getData?.sign || "",
         name: res.getData?.fullName || "John Doe",
@@ -292,7 +297,6 @@ export default function AdminDetailPage({ params }) {
               </div>
             </div>
 
-
             {/* Signature Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
@@ -340,6 +344,40 @@ export default function AdminDetailPage({ params }) {
                   </button>
                 </div>
               </div>
+            </div>
+            <div className="flex gap-3">
+              <Link
+                href={`/loggedInAdmin/loan/stepOne/${admin.id}`}
+                className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
+              >
+                Add Loan
+              </Link>
+              <Link
+                href={`/loggedInAdmin/recurring/addRecurring/${admin.id}`}
+                className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
+              >
+                Add Recurring
+              </Link>
+              <Link
+                href={`/loggedInAdmin/recurring/viewRecurring/${
+                  admin.customerId ?? "-"
+                }`}
+                className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
+              >
+                View Recurring
+              </Link>
+              <Link
+                href={`/loggedInAdmin/loan/viewLoan/${admin.customerId ?? "-"}`}
+                className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
+              >
+                View Loan
+              </Link>
+              <button
+                onClick={() => alert("Coming Soon")}
+                className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
+              >
+                Gold Loan
+              </button>
             </div>
           </div>
         </div>

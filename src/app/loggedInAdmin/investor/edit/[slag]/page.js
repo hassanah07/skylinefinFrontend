@@ -153,7 +153,7 @@ export default function InvestorEditForm({ params }) {
           <div className="max-w-3xl mx-auto">
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6">
               <h2 className="text-2xl font-bold uppercase text-center mb-8">
-                Edit Investor Form
+                Edit Branch Form
               </h2>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

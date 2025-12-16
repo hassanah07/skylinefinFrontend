@@ -6,24 +6,11 @@ import SideBar from "@/app/components/SideBar";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-export default function InvestorDetailPage({ params }) {
+export default function EmployeeDetailPage({ params }) {
   const router = useRouter();
   const { slag } = use(params);
-  const [admin, setAdmin] = useState({
-    photo: "/default-avatar.png",
-    sign: "/default-avatar.png",
-    title: "Mr/Miss",
-    name: "John Doe",
-    email: "john@example.com",
-    mobile: "+91 9876543210",
-    amount: 0,
-    pan: "ABCDE1234F",
-    aadhaar: "1234 5678 9012",
-    address: "123 Main St, City",
-    status: false,
-    isBranch: false,
-    branchId: false,
-  });
+  const [employee, setEmployee] = useState([]);
+  const host = process.env.NEXT_PUBLIC_HOST.replace(/^\//, "");
 
   const [photo, setPhoto] = useState(null);
   const [signature, setSignature] = useState(null);
@@ -32,6 +19,9 @@ export default function InvestorDetailPage({ params }) {
   const [signPreview, setSignPreview] = useState();
   const fileInputRef = useRef(null);
   const signatureInputRef = useRef(null);
+  const [employeeSign, setEmployeeSign] = useState("");
+  const [employeePhoto, setEmployeePhoto] = useState("");
+  const [address, setAddress] = useState([]);
 
   const compressImage = async (file) => {
     return new Promise((resolve) => {
@@ -119,16 +109,13 @@ export default function InvestorDetailPage({ params }) {
     formData.append("photo", photo); // must match upload.single("photo")
     formData.append("id", slag); // must match upload.single("photo")
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/image/invphoto`,
-      {
-        method: "POST",
-        headers: {
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: formData,
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/image/photo`, {
+      method: "POST",
+      headers: {
+        "admin-token": localStorage.getItem("token"),
+      },
+      body: formData,
+    });
 
     const data = await res.json();
     toast.info(`${data.msg}`);
@@ -144,55 +131,46 @@ export default function InvestorDetailPage({ params }) {
     formData.append("sign", signature); // must match upload.single("sign")
     formData.append("id", slag); // must match upload.single("sign")
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_HOST}/api/image/invsign`,
-      {
-        method: "POST",
-        headers: {
-          "admin-token": localStorage.getItem("token"),
-        },
-        body: formData,
-      }
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/image/sign`, {
+      method: "POST",
+      headers: {
+        "admin-token": localStorage.getItem("token"),
+      },
+      body: formData,
+    });
 
     const data = await res.json();
-    console.log(data);
     toast.info(`${data.msg}`);
   };
 
   useEffect(() => {
-    const access = async () => {
-      const data = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/investor/getInvestorDetail`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "Application/json",
-            "admin-token": localStorage.getItem("token"),
-          },
-          body: JSON.stringify({ id: slag }),
-        }
-      );
-      const res = await data.json();
-      console.log(res.getData);
-      setAdmin({
-        photo: res.getData?.image || "",
-        sign: res.getData?.sign || "",
-        title: res.getData?.title || "",
-        name:
-          `${res.getData?.firstName} ${res.getData?.lastName}` || "John Doe",
-        email: res.getData?.email || "john@example.com",
-        mobile: res.getData?.phone || "+91 9876543210",
-        amount: res.getData?.amount || 0,
-        pan: res.getData?.pan || "ABCDE1234F",
-        aadhaar: res.getData?.aadhaar || "1234 5678 9012",
-        address: res.getData?.address || "123 Main St, City",
-        status: res.getData?.status || false,
-        isBranch: res.getData?.isBranch || false,
-        branchId: res.getData?.branchId || "123 123 123",
-      });
+    const fetchEmployee = async () => {
+      try {
+        let res = await fetch(
+          `${process.env.NEXT_PUBLIC_HOST}/api/employee/getEmployee`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "Application/json",
+              "admin-token": localStorage.getItem("token"),
+            },
+            body: JSON.stringify({ employeeId: slag }),
+          }
+        );
+        if (res.ok) res = await res.json();
+        console.log(res.employee);
+        const sign = res.employee?.signature.replace(/^\//, "");
+        const photo = res.employee?.image.replace(/^\//, "");
+
+        setEmployee(res.employee);
+        setEmployeeSign(sign);
+        setEmployeePhoto(photo);
+        setAddress(res.employee.postalData);
+      } catch (e) {
+        // ignore - we'll use mock
+      }
     };
-    access();
+    fetchEmployee();
   }, [slag]);
 
   return (
@@ -209,7 +187,7 @@ export default function InvestorDetailPage({ params }) {
             >
               🔙
             </span>
-            <h1 className="text-3xl font-bold mb-8 ml-16">Branch Profile</h1>
+            <h1 className="text-3xl font-bold mb-8 ml-16">Employee Details</h1>
 
             {/* Photo Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -217,17 +195,17 @@ export default function InvestorDetailPage({ params }) {
               <div className="md:col-span-1">
                 <div className="bg-gray-200 dark:bg-slate-800 rounded-lg p-4 text-center">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_HOST}${admin?.photo}`}
-                    alt="Profile Photo"
+                    src={`${host}/${employeePhoto}`}
+                    alt="image"
                     width={200}
                     height={200}
-                    className="w-40 h-40 rounded-lg object-cover mx-auto mb-4"
+                    className="mb-3 mx-auto max-h-24 object-contain"
                   />
                   {preview && (
                     <Image
                       src={
                         preview ||
-                        `${process.env.NEXT_PUBLIC_HOST}/${admin?.photo}`
+                        `${process.env.NEXT_PUBLIC_HOST}/${employee?.image}`
                       }
                       alt="Profile Photo"
                       width={200}
@@ -263,27 +241,34 @@ export default function InvestorDetailPage({ params }) {
                   <div>
                     <p className="text-sm">Name</p>
                     <p className="text-lg font-semibold">
-                      {admin.title}. {admin.name}
+                      {employee.f_name} {employee.l_name}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm">Email ID</p>
-                    <p className="text-lg font-semibold">{admin.email}</p>
+                    <p className="text-lg font-semibold">{employee.email}</p>
                   </div>
                   <div>
                     <p className="text-sm">Mobile No</p>
-                    <p className="text-lg font-semibold">{admin.mobile}</p>
+                    <p className="text-lg font-semibold">{employee.mobile}</p>
                   </div>
                   <div>
-                    <p className="text-sm">Invested Amount</p>
-                    <p className="text-lg font-semibold">{admin.amount}</p>
+                    <p className="text-sm">Role</p>
+                    <p className="text-lg font-semibold">{employee.role}</p>
                   </div>
-                  {admin.isBranch === true && (
-                    <div>
-                      <p className="text-sm">Branch Id</p>
-                      <p className="text-lg font-semibold">{admin.branchId}</p>
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-sm">Status</p>
+                    <p
+                      className={`text-lg font-semibold ${
+                        employee.status === true
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {employee.status === true && <>Active</>}
+                      {employee.status === false && <>Inactive</>}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -292,18 +277,24 @@ export default function InvestorDetailPage({ params }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div>
                 <p className="text-sm">PAN No</p>
-                <p className="text-lg font-semibold">{admin.pan}</p>
+                <p className="text-lg font-semibold">{employee.pan}</p>
               </div>
               <div>
                 <p className="text-sm">Aadhaar No</p>
-                <p className="text-lg font-semibold">{admin.aadhaar}</p>
+                <p className="text-lg font-semibold">{employee.aadhar}</p>
               </div>
             </div>
 
             {/* Address */}
             <div className="mb-8">
               <p className="text-sm">Address</p>
-              <p className="text-lg font-semibold">{admin.address}</p>
+              <p className="text-sm">{employee.landmark}</p>
+              <p className="text-sm">{address[0]?.Name}</p>
+              <p className="text-sm">{address[0]?.BranchType}</p>
+              <p className="text-sm">{address[0]?.Division}</p>
+              <p className="text-sm">{address[0]?.Region}</p>
+              <p className="text-sm">{address[0]?.Circle}</p>
+              <p className="text-sm">{address[0]?.Pincode}</p>
             </div>
 
             {/* Signature Section */}
@@ -314,18 +305,34 @@ export default function InvestorDetailPage({ params }) {
                 </label>
                 <div className="bg-white dark:bg-gray-600 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                   <Image
-                    src={
-                      `${process.env.NEXT_PUBLIC_HOST}${admin.sign}` ||
-                      "https://i.fonts2u.com/ha/hand-signature-demo_4.png"
-                    }
-                    alt="Signature"
+                    src={`${host}/${employeeSign}`}
+                    alt={`${host}/${employeeSign}`}
                     width={150}
                     height={100}
                     className="mb-3 mx-auto max-h-24 object-contain"
                   />
+                  {/* {(() => {
+                    const host = process.env.NEXT_PUBLIC_HOST?.replace(
+                      /\/$/,
+                      ""
+                    );
+                    const img = employee?.signature?.replace(/^\//, "");
+
+                    if (!host || !img) return null;
+
+                    return (
+                      <Image
+                        src={`${host}/${img}`}
+                        alt="image"
+                        width={200}
+                        height={200}
+                        className="mb-3 mx-auto max-h-24 object-contain"
+                      />
+                    );
+                  })()} */}
                   {signPreview && (
                     <Image
-                      src={signPreview || admin.sign}
+                      src={signPreview || employee.signature}
                       alt="Signature"
                       width={150}
                       height={100}
@@ -354,8 +361,6 @@ export default function InvestorDetailPage({ params }) {
                 </div>
               </div>
             </div>
-
-            {/* Action Buttons */}
           </div>
         </div>
       </div>

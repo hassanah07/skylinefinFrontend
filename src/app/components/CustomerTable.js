@@ -75,7 +75,9 @@ const CustomerTable = ({ customerData = [] }) => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="text-sm">
+                <th className="py-2 px-3">Image</th>
                 <th className="py-2 px-3">Name</th>
+                <th className="py-2 px-3">Father Name</th>
                 {/* <th className="py-2 px-3">Father&apos;s Name</th> */}
                 <th className="py-2 px-3">Customer ID</th>
                 <th className="py-2 px-3">Mobile</th>
@@ -99,83 +101,42 @@ const CustomerTable = ({ customerData = [] }) => {
                       key={key}
                       className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
                     >
+                      <td className="py-3">
+                        <div className="flex items-center">
+                          <div>
+                            <Image
+                              src={`${host}/${img}`}
+                              alt="Profile Photo"
+                              width={200}
+                              height={200}
+                              className="w-10 h-10 rounded-md items-center justify-center"
+                            />
+                          </div>
+                        </div>
+                      </td>
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-3">
-                          <Image
-                            src={`${host}/${img}`}
-                            alt="Profile Photo"
-                            width={200}
-                            height={200}
-                            className="w-10 h-10 rounded-md items-center justify-center"
-                          />
-
                           <div>
-                            <Link
-                              href={`/loggedInAdmin/customer/profile/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <div className="font-medium uppercase">
-                                {e.fullName || e.name || "-"}
-                              </div>
-                            </Link>
+                            <div className="font-medium uppercase">
+                              {e.fullName || e.name || "-"}
+                            </div>
                           </div>
                         </div>
                       </td>
                       {/* <td className="py-3 px-3 text-sm uppercase">
                         {e.fatherName || "-"}
                       </td> */}
-                      <td className="py-3 px-3">
-                        <Link
-                          href={`/loggedInAdmin/loan/viewLoan/${
-                            e.customerId ?? "-"
-                          }`}
-                        >
-                          {e.customerId ?? "-"}
-                        </Link>
-                      </td>
+                      <td className="py-3 px-3">{e.fatherName ?? "-"}</td>
+                      <td className="py-3 px-3">{e.customerId ?? "-"}</td>
                       <td className="py-3 px-3 text-sm">{e.mobile ?? "-"}</td>
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-4">
-                          {/* <Link
-                            href={`/loggedInAdmin/recurring/viewRecurring/${
-                              e.customerId ?? "-"
-                            }`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <GiPayMoney
-                              className="text-2xl"
-                              title="View Recurring"
-                            />
-                          </Link> */}
                           <Link
-                            href={`/loggedInAdmin/loan/viewLoan/${
-                              e.customerId ?? "-"
-                            }`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                            href={`/loggedInAdmin/customer/profile/${e._id}`}
+                            className="text-sm hover:text-amber-500  bg-red-300 py-1 px-2 rounded"
                           >
-                            <GiReceiveMoney
-                              className="text-2xl"
-                              title="View Loan"
-                            />
+                            View
                           </Link>
-                          <Link
-                            href={`/loggedInAdmin/loan/stepOne/${e._id}`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <FaPlusCircle
-                              className="text-2xl"
-                              title="Process Loan"
-                            />
-                          </Link>
-                          {/* <Link
-                            href={`/loggedInAdmin/recurring/addRecurring/${e._id}`}
-                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                          >
-                            <FaRegCalendarPlus
-                              className="text-2xl"
-                              title="Process Recurring"
-                            />
-                          </Link> */}
                         </div>
                       </td>
                     </tr>

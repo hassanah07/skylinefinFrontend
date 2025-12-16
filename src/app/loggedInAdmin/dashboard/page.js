@@ -4,7 +4,7 @@ import DashMain from "@/app/components/DashMain";
 import DonutChart from "@/app/components/DonutChart";
 import EmployeeTable from "@/app/components/EmployeeTable";
 import InvestorTable from "@/app/components/Investor";
-import MarchantTable from "@/app/components/MarchantTable";
+import MarchantTable from "@/app/loggedInAdmin/marchant/components/DealerTable";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import { redirect } from "next/navigation";

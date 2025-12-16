@@ -73,7 +73,7 @@ const SideBar = () => {
             className="flex"
           >
             <FaPeopleGroup className="text-2xl mr-2 my-1" />{" "}
-            {sidebarOpen ? "Investor" : ""}
+            {sidebarOpen ? "Branch" : ""}
           </Link>
           <Link
             href="/loggedInAdmin/employee"
@@ -89,7 +89,7 @@ const SideBar = () => {
             className="flex"
           >
             <FaUserFriends className="text-2xl mr-2 my-1" />{" "}
-            {sidebarOpen ? "Marchant" : ""}
+            {sidebarOpen ? "Dealer" : ""}
           </Link>
           <Link
             href="/loggedInAdmin/customer"
@@ -107,14 +107,6 @@ const SideBar = () => {
             <FaTachometerAlt className="text-2xl mr-2 my-1" />{" "}
             {sidebarOpen ? "Cradit History" : ""}
           </Link>
-          {/* <Link
-            href="/loggedInAdmin/employee/viewAttandance"
-            open={sidebarOpen}
-            className="flex"
-          >
-            <LuNotebookPen className="text-2xl mr-2 my-1" />{" "}
-            {sidebarOpen ? "Attendance" : ""}
-          </Link> */}
           <Link
             href="/loggedInAdmin/emiCalculator"
             open={sidebarOpen}

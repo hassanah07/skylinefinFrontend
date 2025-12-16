@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,6 +11,7 @@ const Page = () => {
   const [email, setEmail] = useState("");
   const [butnLoadning, setButnLoadning] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [sessionId, setSessionId] = useState(0);
   const handleChange = (e) => {
     if (e.target.name == "email") {
       setEmail(e.target.value);
@@ -61,23 +62,37 @@ const Page = () => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    const con = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_HOST}/api/checkConnection/response`
-        );
-        const res = await response.json();
-        console.log(res);
-        if (res.status === true) {
-          setIsConnected(true);
-        }
-      } catch (error) {
+  const con = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/checkConnection/response`
+      );
+      const res = await response.json();
+
+      console.log(res);
+
+      if (res.status === true) {
+        setIsConnected(true);
+      } else {
         setIsConnected(false);
       }
-    };
-    con();
+    } catch (error) {
+      setIsConnected(false);
+    }
   }, []);
+
+  useEffect(() => {
+    let timer;
+
+    if (!isConnected) {
+      con();
+      timer = setTimeout(() => {
+        con();
+      }, 2000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isConnected, con]);
 
   return (
     <div className="text-black body-font bg-white dark:bg-slate-700 dark:text-white flex items-center justify-center min-h-screen">
@@ -97,8 +112,8 @@ const Page = () => {
             </h1>
           </div>
           <span>
-            <p className="text-red-600 text-shadow-2xl absolute right-36 top-10 bg-indigo-500 rounded">
-              {isConnected === true ? "😊" : "😭"}
+            <p className="text-red-600 text-shadow-2xl absolute right-0 top-10 bg-indigo-500 rounded">
+              {isConnected === true ? "✅" : "❎"}
             </p>
           </span>
           <hr />

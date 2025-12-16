@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Page = ({ params }) => {
+  const router = useRouter();
   const { slag } = use(params);
   const mySlag = decodeURIComponent(slag);
   const optionsOccupation = [
@@ -110,7 +111,13 @@ const Page = ({ params }) => {
         <SideBar />
         <main className="flex-1 p-6">
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 relative">
+              <button
+                className="bg-red-300 px-3 py-1 rounded cursor-pointer"
+                onClick={() => router.back()}
+              >
+                🔙
+              </button>
               <h2 className="text-2xl font-bold uppercase text-center mb-8">
                 New Loan Account
               </h2>
