@@ -70,22 +70,26 @@ const TopBar = () => {
           {/* Dropdown Menu */}
           {isOpen && (
             <ul className="absolute top-14 right-10 z-10 mt-1 bg-gray-300 dark:bg-gray-700 text-black  dark:text-white border border-gray-300 rounded-md shadow-lg">
-              <li
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-                className="px-4 py-2 cursor-pointer hover:bg-gray-400"
-              >
-                Create Customer
-              </li>
-              <li
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-                className="px-4 py-2 cursor-pointer hover:bg-gray-400"
-              >
-                View Customer
-              </li>
+              <Link href="/loggedInAdmin/customer/initialCheck">
+                <li
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                  className="px-4 py-2 cursor-pointer hover:bg-gray-400"
+                >
+                  Create Customer
+                </li>
+              </Link>
+              <Link href="/loggedInAdmin/customer">
+                <li
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                  className="px-4 py-2 cursor-pointer hover:bg-gray-400"
+                >
+                  View Customers
+                </li>
+              </Link>
             </ul>
           )}
           <Link href="/loggedInAdmin/profile" className="flex">

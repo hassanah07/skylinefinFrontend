@@ -24,18 +24,17 @@ export default function DocViewer({ params }) {
     const access = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_HOST}/api/image/doclist`,
+          `${process.env.NEXT_PUBLIC_HOST}/api/image/dealerdoclist`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               "admin-token": localStorage.getItem("token"),
             },
-            body: JSON.stringify({ loanAccountNumber: slag }),
+            body: JSON.stringify({ id: slag }),
           }
         );
         const resp = await res.json();
-        console.log(resp);
         setImageData(resp.list);
         if (resp.status === true) {
           toast.success(`${resp.msg}`);
@@ -96,7 +95,7 @@ export default function DocViewer({ params }) {
                 onClick={() => setSelectedImage(null)}
                 className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
               >
-                <div className="relative max-w-4xl w-full bg-white dark:bg-green-900 rounded-lg overflow-hidden">
+                <div className="relative max-w-4xl w-full bg-white dark:bg-green-800 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setSelectedImage(null)}
                     className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition z-10"

@@ -91,7 +91,7 @@ export default function DocUploader({ params }) {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/image/documents`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/image/dealerDocuments`,
         {
           method: "POST",
           headers: {

@@ -70,7 +70,7 @@ const Page = () => {
                 href="/loggedInAdmin/customer/initialCheck"
                 className="bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-600"
               >
-                Add Loan User
+                Create New Customer
               </Link>
             </span>
             <div className="relative overflow-x-auto">

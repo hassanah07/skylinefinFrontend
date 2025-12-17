@@ -4,6 +4,8 @@ import TopBar from "@/app/components/TopBar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { use, useCallback, useEffect, useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LoanAmortizationPage({ params }) {
   const router = useRouter();
@@ -40,6 +42,16 @@ export default function LoanAmortizationPage({ params }) {
       setLoading(false);
     }
   }, [mySlag]);
+  const toastOptions = {
+    theme: "dark",
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  };
   const payNow = async (installmentNo, dueDate, amount) => {
     const data = {
       loanAccountNumber: mySlag,
@@ -56,7 +68,15 @@ export default function LoanAmortizationPage({ params }) {
       },
       body: JSON.stringify(data),
     });
-    // console.table(res);
+    res = await res.json();
+    if (res.status === true) {
+      toast.success(res.msg, toastOptions);
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    } else {
+      toast.info(res.msg, toastOptions);
+    }
   };
 
   useEffect(() => {
@@ -110,6 +130,7 @@ export default function LoanAmortizationPage({ params }) {
       <span className="print:hidden">
         <TopBar />
       </span>
+      <ToastContainer />
       <div className="flex relative">
         <span className="print:hidden">
           <SideBar />

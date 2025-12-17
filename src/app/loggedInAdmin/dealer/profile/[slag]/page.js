@@ -355,8 +355,26 @@ export default function AdminDetailPage({ params }) {
                 onClick={() => alert("Coming Soon")}
                 className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
               >
-                Activate/Deactivate
+                Activate
               </button>
+              <button
+                onClick={() => alert("Coming Soon")}
+                className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
+              >
+                Deactivate
+              </button>
+              <Link
+                href={`/loggedInAdmin/dealer/docUploader/${admin.id}`}
+                className="text-sm hover:text-blue-500 bg-yellow-700 p-2 cursor-pointer rounded"
+              >
+                Document Upload
+              </Link>
+              <Link
+                href={`/loggedInAdmin/dealer/docViewer/${admin.id}`}
+                className="text-sm hover:text-blue-500 bg-yellow-600 p-2 cursor-pointer rounded"
+              >
+                View Upload
+              </Link>
             </div>
           </div>
         </div>

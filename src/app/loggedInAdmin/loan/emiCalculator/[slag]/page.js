@@ -256,14 +256,14 @@ export default function Page({ params }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen dark:bg-black bg-gray-50">
       <ToastContainer />
 
       <TopBar />
       <div className="flex relative">
         <SideBar />
         <div className="flex-1 p-6">
-          <div className="max-w-5xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+          <div className="max-w-5xl mx-auto bg-white dark:bg-gray-700 shadow-md rounded-lg overflow-hidden">
             <div className="p-5 sm:p-6 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <h1 className="text-xl font-semibold">
                 EMI Calculator (Flat & Reducing)
@@ -318,8 +318,8 @@ export default function Page({ params }) {
               </div>
 
               <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h3 className="text-sm font-medium text-gray-600">
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md">
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Flat Rate
                   </h3>
                   <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
@@ -332,8 +332,8 @@ export default function Page({ params }) {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h3 className="text-sm font-medium text-gray-600">
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md">
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Reducing (Declining) Rate
                   </h3>
                   <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
@@ -362,13 +362,15 @@ export default function Page({ params }) {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Flat schedule */}
-                <div className="bg-white rounded shadow-sm overflow-auto">
+                <div className="bg-white dark:bg-gray-800 dark:p-2 rounded shadow-sm overflow-auto">
                   <div className="p-3 border-b flex items-center justify-between">
                     <h3 className="font-medium">Flat Rate Schedule</h3>
-                    <div className="text-sm text-gray-600">{months} months</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {months} months
+                    </div>
                   </div>
                   <table className="min-w-full text-sm divide-y">
-                    <thead className="bg-gray-50 sticky top-0 print:sticky">
+                    <thead className="bg-gray-50 sticky top-0 print:sticky dark:bg-gray-700">
                       <tr>
                         <th className="p-2 text-left">M</th>
                         <th className="p-2 text-right">Opening</th>
@@ -414,13 +416,15 @@ export default function Page({ params }) {
                 </div>
 
                 {/* Reducing schedule */}
-                <div className="bg-white rounded shadow-sm overflow-auto">
+                <div className="bg-white dark:bg-gray-800 p-2 rounded shadow-sm overflow-auto">
                   <div className="p-3 border-b flex items-center justify-between">
                     <h3 className="font-medium">Reducing Rate Schedule</h3>
-                    <div className="text-sm text-gray-600">{months} months</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {months} months
+                    </div>
                   </div>
                   <table className="min-w-full text-sm divide-y">
-                    <thead className="bg-gray-50 sticky top-0 print:sticky">
+                    <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0 print:sticky">
                       <tr>
                         <th className="p-2 text-left">M</th>
                         <th className="p-2 text-right">Opening</th>
@@ -465,7 +469,7 @@ export default function Page({ params }) {
               </div>
 
               <div className="mt-4 flex gap-2 print:hidden">
-                <button
+                {/* <button
                   onClick={() => {
                     setPrincipal(100000);
                     setAnnualRate(10);
@@ -474,29 +478,29 @@ export default function Page({ params }) {
                   className="px-3 py-2 bg-gray-200 rounded text-sm"
                 >
                   Reset
-                </button>
+                </button> */}
                 <button
                   onClick={printAll}
-                  className="px-3 py-2 bg-indigo-600 text-white rounded text-sm"
+                  className="px-3 py-2 bg-indigo-600 text-white rounded text-sm cursor-pointer hover:bg-indigo-800"
                 >
                   Print / Save as PDF
                 </button>
                 <button
                   onClick={exportCsv}
-                  className="px-3 py-2 bg-indigo-600 text-white rounded text-sm"
+                  className="px-3 py-2 bg-indigo-600 text-white rounded text-sm cursor-pointer hover:bg-indigo-800"
                 >
                   CSV/Excel Export
                 </button>
                 {/* quick debug: logs the two variables to the console */}
                 <button
                   onClick={flatTableEmail}
-                  className="px-3 py-2 bg-gray-700 text-white rounded text-sm"
+                  className="px-3 py-2 bg-yellow-700 text-white rounded text-sm cursor-pointer hover:bg-yellow-800"
                 >
                   Send EMI Data-Flat
                 </button>
                 <button
                   onClick={reducingTableEmail}
-                  className="px-3 py-2 bg-gray-700 text-white rounded text-sm"
+                  className="px-3 py-2 bg-yellow-700 text-white rounded text-sm cursor-pointer hover:bg-yellow-800"
                 >
                   Send EMI Data-Reducing
                 </button>

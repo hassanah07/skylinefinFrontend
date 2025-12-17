@@ -7,6 +7,7 @@ import {
   FaPrint,
   FaCloudDownloadAlt,
 } from "react-icons/fa";
+import { HiDocumentCurrencyRupee } from "react-icons/hi2";
 import { LuView } from "react-icons/lu";
 import { TiTickOutline } from "react-icons/ti";
 import { CiSearch } from "react-icons/ci";
@@ -15,6 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { redirect, useRouter } from "next/navigation";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import { MdViewCompactAlt } from "react-icons/md";
 
 const CustomerLoanTable = ({ customerLoanData = [] }) => {
   const router = useRouter();
@@ -287,116 +289,25 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                         </button>
                       </td>
                       <td className="py-3 px-3">
-                        <div className="flex items-center gap-4">
-                          {e.stepOne === false && (
-                            <Link
-                              href={`/loggedInAdmin/loan/stepOne/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <TiTickOutline
-                                className="text-2xl"
-                                title="Step I"
-                              />
-                            </Link>
-                          )}
-                          {e.stepTwo === false && (
-                            <Link
-                              href={`/loggedInAdmin/loan/stepTwo/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <TiTickOutline
-                                className="text-2xl"
-                                title="Step II"
-                              />
-                            </Link>
-                          )}
-
-                          {e.stepThree === false && (
-                            <Link
-                              href={`/loggedInAdmin/loan/stepThree/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <TiTickOutline
-                                className="text-2xl"
-                                title="Step III"
-                              />
-                            </Link>
-                          )}
-                          {e.stepFour === false && (
-                            <Link
-                              href={`/loggedInAdmin/loan/stepFour/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <TiTickOutline
-                                className="text-2xl"
-                                title="Step IV"
-                              />
-                            </Link>
-                          )}
-                          {e.stepFive === false && (
-                            <Link
-                              href={`/loggedInAdmin/loan/stepFive/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <TiTickOutline
-                                className="text-2xl"
-                                title="Step V"
-                              />
-                            </Link>
-                          )}
-                          {e.stepSix === false && (
-                            <Link
-                              href={`/loggedInAdmin/loan/stepSix/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <TiTickOutline
-                                className="text-2xl"
-                                title="Step VI"
-                              />
-                            </Link>
-                          )}
-                          {e.stepSeven === false && (
-                            <Link
-                              href={`/loggedInAdmin/loan/stepSeven/${e._id}`}
-                              className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                            >
-                              <TiTickOutline
-                                className="text-2xl"
-                                title="Step VII"
-                              />
-                            </Link>
-                          )}
-                          {e.stepEight === false && (
-                            <>
-                              <Link
-                                href={`/loggedInAdmin/loan/stepEight/${e._id}`}
-                                className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                              >
-                                <TiTickOutline
-                                  className="text-2xl"
-                                  title="Step VIII"
-                                />
-                              </Link>
-                            </>
-                          )}
-                          {e.stepTwo === true &&
-                            e.stepThree === true &&
-                            e.stepFour === true &&
-                            e.stepFive === true &&
-                            e.stepSix === true &&
-                            e.stepSeven === true &&
-                            e.stepEight === true && (
-                              <Link
-                                // href={`/loggedInAdmin/loan/viewCustomerLoan/${e._id}`}
-                                href="#"
-                                className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
-                              >
-                                <LuView
-                                  className="text-2xl"
-                                  title="Setup Payment"
-                                />
-                              </Link>
-                            )}
+                        <div className="flex items-center gap-3">
+                          <Link
+                            href={`/loggedInAdmin/loan/viewCustomerLoan/${e.loanAccountNumber}`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <MdViewCompactAlt
+                              className="text-4xl"
+                              title="View"
+                            />
+                          </Link>
+                          <Link
+                            href={`/loggedInAdmin/loan/statement/${e.loanAccountNumber}`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <HiDocumentCurrencyRupee
+                              className="text-3xl"
+                              title="View"
+                            />
+                          </Link>
                         </div>
                       </td>
                     </tr>

@@ -2,6 +2,7 @@
 import React, { useRef, useState } from "react";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
+import { useRouter } from "next/navigation";
 
 /**
  * Loan Transaction Statement Page (Next.js app route)
@@ -14,6 +15,7 @@ import TopBar from "@/app/components/TopBar";
  */
 
 export default function Page() {
+  const router = useRouter();
   const statementRef = useRef(null);
   const [exporting, setExporting] = useState(false);
 
@@ -169,7 +171,13 @@ export default function Page() {
         </span>
         <div className="flex-1 p-6">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 relative">
+              <button
+                className="bg-purple-300 px-3 py-1 rounded cursor-pointer"
+                onClick={() => router.back()}
+              >
+                🔙
+              </button>
               <h1 className="text-2xl md:text-3xl font-semibold">
                 Loan Statement
               </h1>
