@@ -2,6 +2,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FaUserEdit } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
+import Link from "next/link";
+import Image from "next/image";
 
 const DealerTable = ({ dealerData = [] }) => {
   const [query, setQuery] = useState("");
@@ -13,12 +15,10 @@ const DealerTable = ({ dealerData = [] }) => {
 
   const dealers = useMemo(() => dealerData || [], [dealerData]);
 
-  const filtered = dealers.filter(
-    (e) =>
-      e.name.toLowerCase().includes(query.toLowerCase()) ||
-      e.email.toLowerCase().includes(query.toLowerCase()) ||
-      e.email.toLowerCase().includes(query.toLowerCase()) ||
-      e.location.toLowerCase().includes(query.toLowerCase())
+  const filtered = dealers.filter((e) =>
+    [e?.name, e?.email, e?.location, e?.mobile]
+      .map((v) => String(v ?? "").toLowerCase())
+      .some((v) => v.includes(query.toLowerCase()))
   );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -53,9 +53,10 @@ const DealerTable = ({ dealerData = [] }) => {
             <thead>
               <tr className="text-sm">
                 <th className="py-2 px-3">Name</th>
-                <th className="py-2 px-3">Role</th>
+                <th className="py-2 px-3">Dealer Id</th>
+                <th className="py-2 px-3">Location</th>
                 <th className="py-2 px-3">Email</th>
-                <th className="py-2 px-3">Status</th>
+                <th className="py-2 px-3">Mobile</th>
                 <th className="py-2 px-3">Actions</th>
               </tr>
             </thead>
@@ -67,45 +68,49 @@ const DealerTable = ({ dealerData = [] }) => {
                   </td>
                 </tr>
               ) : (
-                paginated.map((e) => (
-                  <tr
-                    key={e.id}
-                    className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
-                  >
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
-                          {e.name
-                            .split(" ")
-                            .map((x) => x[0])
-                            .slice(0, 2)
-                            .join("")}
+                paginated.map((e, index) => {
+                  const key = e._id ?? index;
+                  const host = process.env.NEXT_PUBLIC_HOST?.replace(/\/$/, "");
+                  const img = e?.image?.replace(/^\//, "");
+                  return (
+                    <tr
+                      key={e._id}
+                      className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
+                    >
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-3">
+                          <div className="rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
+                            <Image
+                              src={`${host}/${img}`}
+                              alt="Profile Photo"
+                              width={200}
+                              height={200}
+                              className="w-10 h-10 rounded-md items-center justify-center"
+                            />
+                          </div>
+                          <div>
+                            <div className="font-medium">{e.name}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-medium">{e.name}</div>
+                      </td>
+                      <td className="py-3 px-3">{e.dealerId}</td>
+                      <td className="py-3 px-3">{e.location}</td>
+                      <td className="py-3 px-3 text-sm">{e.email}</td>
+                      <td className="py-3 px-3 text-sm">{e.mobile}</td>
+
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/loggedInAdmin/dealer/profile/${e._id}`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <FaUserEdit className="text-2xl" />
+                          </Link>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-3">{e.role}</td>
-                    <td className="py-3 px-3 text-sm">{e.email}</td>
-                    <td className="py-3 px-3">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor(
-                          e.status
-                        )}`}
-                      >
-                        {e.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <button className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline">
-                          <FaUserEdit className="text-2xl" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

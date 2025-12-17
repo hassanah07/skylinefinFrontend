@@ -31,6 +31,7 @@ export default function AddDealerForm() {
     postalData: null,
     email: "@gmail.com",
     mobile: "",
+    location: "",
   });
 
   const toastOptions = {
@@ -66,6 +67,7 @@ export default function AddDealerForm() {
         }
       );
       const data = await response.json();
+      console.log(data);
       if (data.login === false) {
         localStorage.removeItem("token");
         toast.success(`Redirect to Login`, toastOptions);
@@ -103,7 +105,15 @@ export default function AddDealerForm() {
       <div className="flex relative">
         <SideBar />
         <main className="flex-1 p-6">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto relative">
+            <button
+              className="absolute left-0 top-0 bg-red-500 text-white px-4 py-2 rounded m-4 text-xl hover:bg-blue-600"
+              onClick={() => {
+                router.back();
+              }}
+            >
+              🔙
+            </button>
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6">
               <h2 className="text-2xl font-bold uppercase text-center mb-8">
                 Create New Dealer
@@ -181,16 +191,29 @@ export default function AddDealerForm() {
                         type="text"
                         className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
                         value={formData.pan}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          let value = e.target.value.toUpperCase();
+                          let result = "";
+
+                          for (let i = 0; i < value.length && i < 10; i++) {
+                            const char = value[i];
+
+                            if (i < 5 && /[A-Z]/.test(char)) {
+                              result += char;
+                            } else if (i >= 5 && i < 9 && /[0-9]/.test(char)) {
+                              result += char;
+                            } else if (i === 9 && /[A-Z]/.test(char)) {
+                              result += char;
+                            }
+                          }
+
                           setFormData({
                             ...formData,
-                            pan: e.target.value
-                              .slice(0, 10)
-                              .trim()
-                              .toUpperCase()
-                              .replace(/[^a-zA-Z0-9]/g, ""),
-                          })
-                        }
+                            pan: result,
+                          });
+                        }}
+                        maxLength={10}
+                        placeholder="AAAAA1234X"
                         required
                       />
                     </span>
@@ -385,6 +408,27 @@ export default function AddDealerForm() {
                             e.preventDefault();
                           }
                         }}
+                        required
+                      />
+                    </span>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Location
+                    </label>
+                    <span className="flex">
+                      <input
+                        type="text"
+                        className="mt-1 block w-full shadow-md focus:border-blue-500 border-b-2"
+                        value={formData.location}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            location: e.target.value
+                              .toUpperCase()
+                              .replace(/[^A-Z0-9 ]/g, ""),
+                          })
+                        }
                         required
                       />
                     </span>

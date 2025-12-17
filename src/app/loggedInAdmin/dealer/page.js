@@ -4,10 +4,11 @@ import TopBar from "@/app/components/TopBar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import DealerTable from "@/app/loggedInAdmin/marchant/components/DealerTable";
+import DealerTable from "@/app/loggedInAdmin/dealer/components/DealerTable";
 
 const Page = () => {
   const [customerData, setCustomerData] = useState([]);
+  const [dealer, setDealer] = useState([]);
   const salary = 250000;
   const router = useRouter();
   const data = async () => {
@@ -22,8 +23,8 @@ const Page = () => {
       }
     );
     const fetchRespose = await res.json();
-    console.log(fetchRespose.getUser[0]);
-    setCustomerData(fetchRespose.getUser);
+    console.log(fetchRespose.dealer);
+    setDealer(fetchRespose.dealer);
   };
   useEffect(() => {
     data();
@@ -46,14 +47,14 @@ const Page = () => {
             </button>
             <span className="absolute right-0 top-5">
               <Link
-                href="/loggedInAdmin/marchant/addMarchant"
+                href="/loggedInAdmin/dealer/addDealer"
                 className="bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-600"
               >
                 Create New Dealer
               </Link>
             </span>
             <div className="relative overflow-x-auto">
-              <DealerTable customerData={customerData} />
+              <DealerTable dealerData={dealer} />
             </div>
           </div>
         </main>

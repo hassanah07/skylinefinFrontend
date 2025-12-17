@@ -84,7 +84,7 @@ const SideBar = () => {
             {sidebarOpen ? "Employee" : ""}
           </Link>
           <Link
-            href="/loggedInAdmin/marchant"
+            href="/loggedInAdmin/dealer"
             open={sidebarOpen}
             className="flex"
           >
@@ -100,7 +100,7 @@ const SideBar = () => {
             {sidebarOpen ? "Customer" : ""}
           </Link>
           <Link
-            href="/loggedInAdmin/marchant"
+            href="/loggedInAdmin/craditScoreCheck"
             open={sidebarOpen}
             className="flex"
           >

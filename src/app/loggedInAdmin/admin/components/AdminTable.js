@@ -87,7 +87,7 @@ const AdminTable = ({ admin = [] }) => {
                 </tr>
               ) : (
                 paginated.map((e, index) => {
-                  const key = e.id ?? e._id ?? index;
+                  const key = e._id ?? index;
                   const host = process.env.NEXT_PUBLIC_HOST?.replace(/\/$/, "");
                   const img = e?.image?.replace(/^\//, "");
                   return (
