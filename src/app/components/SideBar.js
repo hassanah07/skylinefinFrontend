@@ -1,8 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import {
   FaUserFriends,
@@ -16,28 +14,9 @@ import { MdDashboard } from "react-icons/md";
 import { FaPeopleGroup, FaPeopleRoof } from "react-icons/fa6";
 import { GrUserWorker } from "react-icons/gr";
 import { GiWallet } from "react-icons/gi";
-import { IoLogOut } from "react-icons/io5";
-import { redirect } from "next/navigation";
 
 const SideBar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const toastOptions = {
-    theme: "dark",
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  };
-  const logout = () => {
-    localStorage.removeItem("token");
-    toast.success("Redirecting To Login Page", toastOptions);
-    setTimeout(() => {
-      redirect("/");
-    }, 3000);
-  };
 
   return (
     <>
@@ -57,7 +36,6 @@ const SideBar = () => {
         } min-h-[calc(100vh-64px)] rounded`}
       >
         {/* min-h-[calc(100vh-64px)] */}
-        <ToastContainer />
         <nav className="p-4 space-y-4 text-black dark:text-white">
           <Link
             href="/loggedInAdmin/dashboard"
@@ -131,18 +109,7 @@ const SideBar = () => {
             <AiOutlineTransaction className="text-2xl mr-2 my-1" />{" "}
             {sidebarOpen ? "Transaction" : ""}
           </Link>
-          <Link
-            href="/loggedInAdmin/profile"
-            open={sidebarOpen}
-            className="flex"
-          >
-            <FaUserCircle className="text-2xl mr-2 my-1" />{" "}
-            {sidebarOpen ? "Profile" : ""}
-          </Link>
-          <a href="#" open={sidebarOpen} className="flex" onClick={logout}>
-            <IoLogOut className="text-2xl mr-2 my-1" />{" "}
-            {sidebarOpen ? "Logout" : ""}
-          </a>
+
           {/* <NavItem icon={<HomeIcon />} label="Overview" open={sidebarOpen} />
           <NavItem icon={<UsersIcon />} label="Employees" open={sidebarOpen} />
           <NavItem
