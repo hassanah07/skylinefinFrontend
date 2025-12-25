@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { use, useCallback, useEffect, useRef, useState } from "react";
 import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import { useRouter } from "next/navigation";
@@ -14,10 +14,15 @@ import { useRouter } from "next/navigation";
  * /C:/Users/ANOWARUL HASSAN/Desktop/current/HR Management/Admin/myapp/src/app/loggedInAdmin/loan/statement/[slag]/page.js
  */
 
-export default function Page() {
+export default function Page({ params }) {
+  const { slag } = use(params);
   const router = useRouter();
   const statementRef = useRef(null);
   const [exporting, setExporting] = useState(false);
+  const [customer, setCustomer] = useState();
+  const [loanData, setLoanData] = useState();
+  const [emiTxn, setEmiTxn] = useState([]);
+  const [emis, setEmis] = useState();
 
   // Example data (replace with real data / fetch)
   const account = {
@@ -160,6 +165,30 @@ export default function Page() {
         .page > .page-content { position: relative; z-index: 10; }
     `;
 
+  const customerHistory = useCallback(async () => {
+    let res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/adminTxn/getTxnByLoanAccountNumber`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ loanAccountNumber: slag }),
+      }
+    );
+    res = await res.json();
+    setCustomer(res.customer);
+    setEmiTxn(res.emiTxn);
+    setLoanData(res.loanDetails);
+    setEmis(res.emis);
+    console.log(res);
+  }, [slag]);
+
+  useEffect(() => {
+    customerHistory();
+  }, [customerHistory]);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black print:dark:bg-white">
       <span className="no-print">
@@ -214,20 +243,22 @@ export default function Page() {
                 <div>
                   <div className="text-sm dark:text-white">Account</div>
                   <div className="text-lg font-medium dark:text-white">
-                    {account.name}
+                    {customer?.fullName}
                   </div>
                   <div className="text-sm dark:text-white">
-                    {account.product} • {account.id}
+                    {loanData?.loanType} • {loanData?.loanAccountNumber}
                   </div>
                 </div>
 
                 <div className="flex gap-4 mt-2 md:mt-0">
-                  <div className="text-right">
-                    <div className="text-sm dark:text-white">
-                      Statement Period
-                    </div>
+                  <div className="">
+                    <div className="text-sm dark:text-white">Processed At</div>
                     <div className="font-medium dark:text-white">
-                      {account.period}
+                      {loanData?.createdAt &&
+                        new Date(loanData.createdAt).toLocaleString("en-IN", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
                     </div>
                   </div>
                   <div className="text-right">
@@ -247,11 +278,11 @@ export default function Page() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                 <div className="p-3 bg-gray-50 dark:bg-black dark:text-white rounded">
                   <div className="text-xs ">Total Disbursed</div>
-                  <div className="font-medium">৳ 15,000.00</div>
+                  <div className="font-medium">₹ {loanData?.amount}</div>
                 </div>
-                <div className="p-3 bg-gray-50 dark:bg-black dark:text-white rounded">
+                {/* <div className="p-3 bg-gray-50 dark:bg-black dark:text-white rounded">
                   <div className="text-xs ">Total Paid</div>
-                  <div className="font-medium">৳ 350.00</div>
+                  <div className="font-medium">₹ 350.00</div>
                 </div>
                 <div className="p-3 bg-gray-50 dark:bg-black dark:text-white rounded">
                   <div className="text-xs ">Next Due Date</div>
@@ -260,7 +291,7 @@ export default function Page() {
                 <div className="p-3 bg-gray-50 dark:bg-black dark:text-white rounded">
                   <div className="text-xs ">Status</div>
                   <div className="font-medium text-emerald-600">Active</div>
-                </div>
+                </div> */}
               </div>
 
               {/* Transactions table */}
@@ -268,37 +299,47 @@ export default function Page() {
                 <table className="w-full text-sm border-collapse">
                   <thead className="bg-black text-white">
                     <tr>
-                      <th className="text-left p-3">Date</th>
-                      <th className="text-left p-3">Description</th>
+                      <th className="text-left p-3">Date And Time</th>
+                      <th className="text-left p-3">Txn Id</th>
+                      <th className="text-left p-3">Type</th>
                       <th className="text-right p-3">Debit (₹)</th>
                       <th className="text-right p-3">Credit (₹)</th>
-                      <th className="text-right p-3">Balance (₹)</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {transactions.map((t, i) => (
+                    {emiTxn.map((t) => (
                       <tr
-                        key={i}
-                        className={
-                          i % 2 === 0
-                            ? "bg-white dark:bg-gray-500"
-                            : "bg-gray-400"
-                        }
+                        key={t._id || t.txnNo}
+                        className="odd:bg-white even:bg-gray-400 dark:odd:bg-gray-500"
                       >
+                        {/* Date & Time */}
                         <td className="p-3 align-top dark:text-white">
-                          {t.date}
+                          {t.createdAt
+                            ? new Date(t.createdAt).toLocaleString("en-IN", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              })
+                            : "-"}
                         </td>
+
+                        {/* Txn Id */}
                         <td className="p-3 align-top dark:text-white">
-                          {t.desc}
+                          {t.txnNo}
                         </td>
-                        <td className="p-3 text-right align-top dark:text-white">
-                          {formatCurrency(t.debit)}
+
+                        {/* Type */}
+                        <td className="p-3 align-top dark:text-white">
+                          {t.isCradit ? "Credit" : "Debit"}
                         </td>
+
+                        {/* Debit */}
                         <td className="p-3 text-right align-top dark:text-white">
-                          {formatCurrency(t.credit)}
+                          {!t.isCradit && formatCurrency(t.amount)}
                         </td>
+
+                        {/* Credit */}
                         <td className="p-3 text-right align-top dark:text-white">
-                          {formatCurrency(t.balance)}
+                          {t.isCradit && formatCurrency(t.amount)}
                         </td>
                       </tr>
                     ))}

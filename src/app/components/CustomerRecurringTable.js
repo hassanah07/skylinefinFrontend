@@ -217,7 +217,7 @@ const CustomerRecurringTable = ({ customerRecurringData = [], mySlag }) => {
 
                       <td className="py-3 px-3">
                         <Link
-                          href={`#`}
+                          href={`/loggedInAdmin/recurring/amortization/${e.recurringId}`}
                           className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
                         >
                           <FaThList

@@ -353,7 +353,7 @@ export default function AdminDetailPage({ params }) {
                 Add Loan
               </Link>
               <Link
-                href={`/loggedInAdmin/recurring/addRecurring/${admin.id}`}
+                href={`/loggedInAdmin/recurring/addRecurring/${admin.customerId}`}
                 className="text-sm hover:text-blue-500 bg-red-700 p-2 cursor-pointer rounded"
               >
                 Add Recurring

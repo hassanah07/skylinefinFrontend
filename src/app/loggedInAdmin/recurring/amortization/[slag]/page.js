@@ -17,14 +17,14 @@ export default function LoanAmortizationPage({ params }) {
     const getData = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_HOST}/api/loanProcessor/getCustomerAmortizationData`,
+          `${process.env.NEXT_PUBLIC_HOST}/api/recurring/schedule`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               "admin-token": localStorage.getItem("token"),
             },
-            body: JSON.stringify({ loanAccountNumber: mySlag }),
+            body: JSON.stringify({ id: mySlag }),
           }
         );
 

@@ -5,6 +5,7 @@ import TopBar from "@/app/components/TopBar";
 import SideBar from "@/app/components/SideBar";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function EmployeeDetailPage({ params }) {
   const router = useRouter();
@@ -109,13 +110,16 @@ export default function EmployeeDetailPage({ params }) {
     formData.append("photo", photo); // must match upload.single("photo")
     formData.append("id", slag); // must match upload.single("photo")
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/image/photo`, {
-      method: "POST",
-      headers: {
-        "admin-token": localStorage.getItem("token"),
-      },
-      body: formData,
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/image/empPhoto`,
+      {
+        method: "POST",
+        headers: {
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: formData,
+      }
+    );
 
     const data = await res.json();
     toast.info(`${data.msg}`);
@@ -131,13 +135,16 @@ export default function EmployeeDetailPage({ params }) {
     formData.append("sign", signature); // must match upload.single("sign")
     formData.append("id", slag); // must match upload.single("sign")
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/image/sign`, {
-      method: "POST",
-      headers: {
-        "admin-token": localStorage.getItem("token"),
-      },
-      body: formData,
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/image/empSign`,
+      {
+        method: "POST",
+        headers: {
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: formData,
+      }
+    );
 
     const data = await res.json();
     toast.info(`${data.msg}`);
@@ -188,7 +195,12 @@ export default function EmployeeDetailPage({ params }) {
               🔙
             </span>
             <h1 className="text-3xl font-bold mb-8 ml-16">Employee Details</h1>
-
+            <Link
+              href={`/loggedInAdmin/employee/getIdCard/${slag}`}
+              className="right-0 top-0 absolute bg-indigo-500 p-2 rounded"
+            >
+              View Id Card
+            </Link>
             {/* Photo Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               {/* Main Photo */}
@@ -311,25 +323,7 @@ export default function EmployeeDetailPage({ params }) {
                     height={100}
                     className="mb-3 mx-auto max-h-24 object-contain"
                   />
-                  {/* {(() => {
-                    const host = process.env.NEXT_PUBLIC_HOST?.replace(
-                      /\/$/,
-                      ""
-                    );
-                    const img = employee?.signature?.replace(/^\//, "");
 
-                    if (!host || !img) return null;
-
-                    return (
-                      <Image
-                        src={`${host}/${img}`}
-                        alt="image"
-                        width={200}
-                        height={200}
-                        className="mb-3 mx-auto max-h-24 object-contain"
-                      />
-                    );
-                  })()} */}
                   {signPreview && (
                     <Image
                       src={signPreview || employee.signature}

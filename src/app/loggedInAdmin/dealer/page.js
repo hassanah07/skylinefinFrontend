@@ -7,10 +7,8 @@ import React, { useEffect, useState } from "react";
 import DealerTable from "@/app/loggedInAdmin/dealer/components/DealerTable";
 
 const Page = () => {
-  const [customerData, setCustomerData] = useState([]);
-  const [dealer, setDealer] = useState([]);
-  const salary = 250000;
   const router = useRouter();
+  const [dealer, setDealer] = useState([]);
   const data = async () => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_HOST}/api/dealer/getDealer`,
@@ -23,7 +21,6 @@ const Page = () => {
       }
     );
     const fetchRespose = await res.json();
-    console.log(fetchRespose.dealer);
     setDealer(fetchRespose.dealer);
   };
   useEffect(() => {

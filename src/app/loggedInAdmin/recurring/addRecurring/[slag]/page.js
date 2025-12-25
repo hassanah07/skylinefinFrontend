@@ -120,15 +120,15 @@ const Page = ({ params }) => {
       console.log(data);
       if (data.login === true) {
         toast.success(`${data.msg}`, toastOptions);
-        setTimeout(() => {
-          redirect("/loggedInAdmin/customer");
-        }, 4000);
+        // setTimeout(() => {
+        //   router.back();
+        // }, 4000);
       } else {
         console.log(data.err);
         toast.error(`${data.msg}`, toastOptions);
-        setTimeout(() => {
-          redirect("/loggedInAdmin/customer");
-        }, 4000);
+        // setTimeout(() => {
+        //   redirect("/loggedInAdmin/customer");
+        // }, 4000);
       }
     } catch (error) {
       toast.error("Please Reload this Page", toastOptions);

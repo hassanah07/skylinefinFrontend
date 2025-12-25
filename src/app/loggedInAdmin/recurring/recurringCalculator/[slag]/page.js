@@ -3,7 +3,7 @@ import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, use } from "react";
 
 const FREQUENCIES = [
   { label: "Daily", value: "daily", periodsPerYear: 365 },
@@ -33,7 +33,8 @@ function paymentForGoal(goal, ratePerPeriod, totalPeriods) {
   return goal / factor;
 }
 
-export default function RecurringCalculator() {
+export default function RecurringCalculator({ params }) {
+  const { slag } = use(params);
   const router = useRouter();
   const [mode, setMode] = useState("future");
   const [payment, setPayment] = useState(200);
@@ -94,8 +95,22 @@ export default function RecurringCalculator() {
     setScheduleData(rows);
   }, [mode, payment, computed.paymentNeeded, ratePerPeriod, totalPeriods]);
 
-  const printScheduleToConsole = () => {
-    console.table(scheduleData);
+  const setRecurring = async () => {
+    // console.table(scheduleData);
+    const save = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/recurring/save`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ scheduleData, recurringId: slag }),
+      }
+    );
+    const response = await save.json();
+    console.log(response);
+    // alert(response.msg);
   };
 
   const downloadJSON = () => {
@@ -139,7 +154,7 @@ export default function RecurringCalculator() {
                   Back
                 </button>
                 <button
-                  onClick={printScheduleToConsole}
+                  onClick={setRecurring}
                   className="bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 text-sm"
                 >
                   Set Recurring

@@ -9,6 +9,7 @@ import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import { redirect } from "next/navigation";
 import { useState, useMemo, useEffect } from "react";
+import DealerTable from "@/app/loggedInAdmin/dealer/components/DealerTable";
 
 export default function AdminDashboard() {
   // const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -203,6 +204,24 @@ export default function AdminDashboard() {
       localStorage.removeItem("token");
     }
   };
+  const [dealer, setDealer] = useState([]);
+  const dealerData = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_HOST}/api/dealer/getDealer`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "admin-token": localStorage.getItem("token"),
+        },
+      }
+    );
+    const fetchRespose = await res.json();
+    setDealer(fetchRespose.dealer);
+  };
+  useEffect(() => {
+    dealerData();
+  }, []);
 
   const [investorData, setInvestorData] = useState([]);
   const data = async () => {
@@ -266,7 +285,7 @@ export default function AdminDashboard() {
             <DonutChart />
           </div>
           <div className="my-6">
-            <MarchantTable />
+            <DealerTable dealerData={dealer} />
           </div>
           <div className="my-6">
             <InvestorTable investorData={investorData} />

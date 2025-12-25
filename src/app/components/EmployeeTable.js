@@ -106,53 +106,57 @@ const EmployeeTable = ({ employeeData = [] }) => {
                   </td>
                 </tr>
               ) : (
-                paginated.map((e, index) => (
-                  <tr
-                    key={index}
-                    className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
-                  >
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
-                          <Image
-                            src="https://www.shutterstock.com/image-vector/beauty-face-woman-logo-vector-600nw-2493789517.jpg"
-                            alt="image"
-                            className="rounded-full w-14"
-                            height={300}
-                            width={300}
-                          />
-                        </div>
-                        <div>
-                          <div className="font-medium">
-                            {e.f_name} {e.l_name}
+                paginated.map((e, index) => {
+                  const host = process.env.NEXT_PUBLIC_HOST?.replace(/\/$/, "");
+                  const img = e?.image?.replace(/^\//, "");
+                  return (
+                    <tr
+                      key={index}
+                      className="bg-gray-100 dark:bg-gray-500 hover:bg-gray-600 text-black hover:text-white"
+                    >
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-3">
+                          <div className="rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
+                            <Image
+                              src={`${host}/${img}`}
+                              alt={index}
+                              width={200}
+                              height={200}
+                              className="w-10 h-10 rounded-md items-center justify-center"
+                            />
+                          </div>
+                          <div>
+                            <div className="font-medium">
+                              {e.f_name} {e.l_name}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-3">{e.role}</td>
-                    <td className="py-3 px-3 text-sm">{e.mobile}</td>
-                    <td className="py-3 px-3 text-sm">{e.email}</td>
-                    <td className="py-3 px-3">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor(
-                          e.status
-                        )}`}
-                      >
-                        {e.status == true ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/loggedInAdmin/employee/view/${e._id}`}
-                          className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                      </td>
+                      <td className="py-3 px-3">{e.role}</td>
+                      <td className="py-3 px-3 text-sm">{e.mobile}</td>
+                      <td className="py-3 px-3 text-sm">{e.email}</td>
+                      <td className="py-3 px-3">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor(
+                            e.status
+                          )}`}
                         >
-                          <FaUserEdit className="text-2xl" />
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {e.status == true ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/loggedInAdmin/employee/view/${e._id}`}
+                            className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
+                          >
+                            <FaUserEdit className="text-2xl" />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

@@ -183,7 +183,6 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                 {/* <th className="py-2 px-3">CIF</th> */}
                 <th className="py-2 px-3">Loan A/C</th>
                 <th className="py-2 px-3">Amount</th>
-                <th className="py-2 px-3">Files</th>
                 <th className="py-2 px-3">Type</th>
                 <th className="py-2 px-3">Calc</th>
                 <th className="py-2 px-3">Amortization</th>
@@ -219,22 +218,6 @@ const CustomerLoanTable = ({ customerLoanData = [] }) => {
                           href={`/loggedInAdmin/loan/viewCustomerLoan/${e._id}`}
                         >
                           {e.amount ?? "-"}
-                        </Link>
-                      </td>
-                      <td className="py-3 px-3 flex gap-3">
-                        <Link href={`/loggedInAdmin/loan/docUploader/${e._id}`}>
-                          <FaCloudUploadAlt
-                            className="text-3xl"
-                            title="Upload"
-                          />
-                        </Link>
-                        <Link
-                          href={`/loggedInAdmin/loan/docViewer/${e.loanAccountNumber}`}
-                        >
-                          <FaCloudDownloadAlt
-                            className="text-3xl"
-                            title="Download"
-                          />
                         </Link>
                       </td>
                       <td className="py-3 px-3">{e.loanType ?? "-"}</td>
