@@ -12,6 +12,7 @@ export default function LoanAmortizationPage({ params }) {
   const printableRef = useRef(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [paidPeriods, setPaidPeriods] = useState({});
 
   useEffect(() => {
     const getData = async () => {
@@ -29,11 +30,8 @@ export default function LoanAmortizationPage({ params }) {
         );
 
         const json = await res.json();
-        if (json.status) {
-          setData(json.data);
-        } else {
-          console.error("Error:", json.msg);
-        }
+        console.log(json.data);
+        setData(json.data);
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
@@ -84,6 +82,50 @@ export default function LoanAmortizationPage({ params }) {
       </div>
     );
   }
+  // Paynow button functioning
+  const handlePayNow = async (period, event) => {
+    // event.preventDefault();
+
+    try {
+      const txnNumber = `TXN_${Date.now()}`; // simple txn number
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/recurring/pay`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            id: mySlag,
+            recurringNumber: row.period,
+            txnNumber: `TXN_${Date.now()}`,
+            amount: row.payment,
+          }),
+        }
+      );
+
+      const json = await res.json();
+
+      if (!json.success) {
+        alert(json.message || "Payment failed");
+        return;
+      }
+
+      // ✅ Update UI immediately
+      setPaidPeriods((prev) => ({
+        ...prev,
+        [period]: {
+          txnNumber,
+          paymentDate: new Date(),
+        },
+      }));
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 print:p-0">
@@ -116,22 +158,58 @@ export default function LoanAmortizationPage({ params }) {
               className="bg-white rounded-lg shadow p-6 space-y-6 print:shadow-none print:p-2"
             >
               {/* Header Info */}
-              <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <InfoCard title="Customer ID" value={data.customerId} />
-                <InfoCard title="Loan Type" value={data.type} />
-                <InfoCard title="Tenure" value={`${data.tenure} months`} />
+                <InfoCard title="Recurring Id" value={data.recurringId} />
+                <InfoCard
+                  title="Loan Type"
+                  value={
+                    data.frequency === 1
+                      ? "Monthly"
+                      : data.frequency === 2
+                      ? "Weekly"
+                      : "Daily"
+                  }
+                />
+                <InfoCard
+                  title="Tenure"
+                  value={`${data.repaymentPeriod} Months`}
+                />
               </section>
 
               {/* Loan Summary */}
-              <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <SummaryBox
-                  title="Loan Amount"
-                  value={`₹ ${formatMoney(data.loanAmount)}`}
+                  title="Recurring Amount"
+                  value={`₹ ${formatMoney(data.amount)}`}
                 />
-                <SummaryBox title="Interest Rate" value={`${data.interest}%`} />
                 <SummaryBox
-                  title="Payable Amount"
-                  value={`₹ ${formatMoney(data.payableAmount)}`}
+                  title="Interest Rate"
+                  value={`${data.interestPercentage}%`}
+                />
+                <SummaryBox
+                  title="Total Payable Amount"
+                  value={`₹ ${formatMoney(
+                    data.frequency === 3
+                      ? data.amount * 30 * data.repaymentPeriod
+                      : data.frequency === 2
+                      ? data.amount * 7 * data.repaymentPeriod
+                      : data.frequency === 1
+                      ? data.amount * 1 * data.repaymentPeriod
+                      : ""
+                  )}`}
+                />
+                <SummaryBox
+                  title="Remaining Payable Amount"
+                  value={`₹ ${formatMoney(
+                    data.frequency === 3
+                      ? data.amount * 30 * data.repaymentPeriod
+                      : data.frequency === 2
+                      ? data.amount * 7 * data.repaymentPeriod
+                      : data.frequency === 1
+                      ? data.amount * 1 * data.repaymentPeriod
+                      : ""
+                  )}`}
                 />
               </section>
 
@@ -145,15 +223,16 @@ export default function LoanAmortizationPage({ params }) {
                     <thead className="bg-slate-50">
                       <tr>
                         {[
-                          "Month",
+                          "SL",
                           "Opening",
-                          "EMI",
+                          "Month",
                           "Principal",
                           "Interest",
                           "Closing",
-                        ].map((h) => (
+                          "#",
+                        ].map((h, i) => (
                           <th
-                            key={h}
+                            key={i}
                             className="px-4 py-2 text-left text-sm text-slate-600"
                           >
                             {h}
@@ -162,25 +241,41 @@ export default function LoanAmortizationPage({ params }) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 bg-white">
-                      {data.schedule.map((row) => (
-                        <tr key={row.m} className="hover:bg-slate-50">
+                      {data?.schedule.map((row, index) => (
+                        <tr key={index} className="hover:bg-slate-50">
                           <td className="px-4 py-2 text-sm text-slate-700">
-                            {row.m}
+                            {row.period}
                           </td>
                           <td className="px-4 py-2 text-sm text-slate-700">
-                            ₹ {formatMoney(row.opening)}
+                            ₹ {formatMoney(row.balance - row.payment)}
                           </td>
                           <td className="px-4 py-2 text-sm text-slate-700">
-                            ₹ {formatMoney(row.emi)}
+                            {row.period}
                           </td>
                           <td className="px-4 py-2 text-sm text-slate-700">
-                            ₹ {formatMoney(row.principal)}
+                            ₹ {formatMoney(row.payment)}
                           </td>
                           <td className="px-4 py-2 text-sm text-slate-700">
                             ₹ {formatMoney(row.interest)}
                           </td>
                           <td className="px-4 py-2 text-sm text-slate-700">
-                            ₹ {formatMoney(row.closing)}
+                            ₹ {formatMoney(row.balance)}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-slate-700">
+                            {paidPeriods[row.period] ? (
+                              <span className="bg-green-600 text-white py-1 px-3 rounded text-sm">
+                                Paid
+                              </span>
+                            ) : (
+                              <button
+                                className="bg-red-700 text-white py-1 px-2 rounded hover:bg-blue-600"
+                                onClick={(event) =>
+                                  handlePayNow(row.period, event)
+                                }
+                              >
+                                Pay Now
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -229,14 +324,14 @@ export default function LoanAmortizationPage({ params }) {
 
 // Helper Components
 const InfoCard = ({ title, value }) => (
-  <div className="p-4 border rounded-md">
+  <div className="p-4 border shadow-2xl shadow-blue-600 rounded-md">
     <h2 className="text-sm text-slate-500">{title}</h2>
     <div className="text-lg font-medium text-slate-800">{value}</div>
   </div>
 );
 
 const SummaryBox = ({ title, value }) => (
-  <div className="p-4 bg-slate-50 rounded-md text-center">
+  <div className="p-4 bg-slate-50 shadow-2xl shadow-amber-700 rounded-md text-center">
     <div className="text-sm text-slate-500">{title}</div>
     <div className="text-2xl font-semibold text-slate-900">{value}</div>
   </div>

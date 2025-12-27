@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import React, { useMemo, useState, useEffect, use } from "react";
 
 const FREQUENCIES = [
-  { label: "Daily", value: "daily", periodsPerYear: 365 },
-  { label: "Weekly", value: "weekly", periodsPerYear: 52 },
-  { label: "Monthly", value: "monthly", periodsPerYear: 12 },
-  { label: "Quarterly", value: "quarterly", periodsPerYear: 4 },
-  { label: "Yearly", value: "yearly", periodsPerYear: 1 },
+  { label: "Daily", value: "3", periodsPerYear: 365 },
+  { label: "Weekly", value: "2", periodsPerYear: 52 },
+  { label: "Monthly", value: "1", periodsPerYear: 12 },
+  // { label: "Quarterly", value: "quarterly", periodsPerYear: 4 },
+  // { label: "Yearly", value: "yearly", periodsPerYear: 1 },
 ];
 
 function periodsPerYearFor(value) {
@@ -42,7 +42,7 @@ export default function RecurringCalculator({ params }) {
   const [annualRate, setAnnualRate] = useState(5);
   const [term, setTerm] = useState(5);
   const [termUnit, setTermUnit] = useState("years");
-  const [freq, setFreq] = useState("monthly");
+  const [freq, setFreq] = useState("1");
   const [scheduleData, setScheduleData] = useState([]);
 
   const periodsPerYear = periodsPerYearFor(freq);
@@ -105,7 +105,14 @@ export default function RecurringCalculator({ params }) {
           "Content-Type": "Application/json",
           "admin-token": localStorage.getItem("token"),
         },
-        body: JSON.stringify({ scheduleData, recurringId: slag }),
+        body: JSON.stringify({
+          scheduleData,
+          recurringId: slag,
+          frequency: freq,
+          startDate: new Date(),
+          interestPercentage: annualRate,
+          amount: payment,
+        }),
       }
     );
     const response = await save.json();
