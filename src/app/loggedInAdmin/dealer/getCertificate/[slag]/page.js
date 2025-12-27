@@ -89,7 +89,7 @@ export default function DealerCertificate({ params }) {
                 {/* Watermark */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
                   <Image
-                    src="/logo.png"
+                    src="/Logo.PNG"
                     alt="Watermark"
                     width={500}
                     height={500}
