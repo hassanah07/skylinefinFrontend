@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Page = ({ params }) => {
   const { slag } = use(params);
+  const router = useRouter();
   const mySlag = decodeURIComponent(slag);
   const optionsOccupation = [
     "Salaried",
@@ -120,9 +121,9 @@ const Page = ({ params }) => {
       console.log(data);
       if (data.login === true) {
         toast.success(`${data.msg}`, toastOptions);
-        // setTimeout(() => {
-        //   router.back();
-        // }, 4000);
+        setTimeout(() => {
+          router.back();
+        }, 4000);
       } else {
         console.log(data.err);
         toast.error(`${data.msg}`, toastOptions);

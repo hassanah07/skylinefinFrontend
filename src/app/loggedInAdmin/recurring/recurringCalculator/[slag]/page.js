@@ -4,6 +4,8 @@ import TopBar from "@/app/components/TopBar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState, useEffect, use } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const FREQUENCIES = [
   { label: "Daily", value: "3", periodsPerYear: 365 },
@@ -44,6 +46,19 @@ export default function RecurringCalculator({ params }) {
   const [termUnit, setTermUnit] = useState("years");
   const [freq, setFreq] = useState("1");
   const [scheduleData, setScheduleData] = useState([]);
+  const toastOptions = useMemo(
+    () => ({
+      theme: "colored",
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    }),
+    []
+  );
 
   const periodsPerYear = periodsPerYearFor(freq);
   const years = termUnit === "months" ? term / 12 : term;
@@ -117,7 +132,7 @@ export default function RecurringCalculator({ params }) {
     );
     const response = await save.json();
     console.log(response);
-    // alert(response.msg);
+    toast.success(response.msg, toastOptions);
   };
 
   const downloadJSON = () => {
@@ -134,6 +149,7 @@ export default function RecurringCalculator({ params }) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black">
+      <ToastContainer />
       <span className="print:hidden">
         <TopBar />
       </span>

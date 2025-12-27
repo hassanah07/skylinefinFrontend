@@ -3,7 +3,9 @@ import SideBar from "@/app/components/SideBar";
 import TopBar from "@/app/components/TopBar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useMemo, useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LoanAmortizationPage({ params }) {
   const router = useRouter();
@@ -13,7 +15,19 @@ export default function LoanAmortizationPage({ params }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paidPeriods, setPaidPeriods] = useState({});
-
+  const toastOptions = useMemo(
+    () => ({
+      theme: "colored",
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    }),
+    []
+  );
   useEffect(() => {
     const getData = async () => {
       try {
@@ -30,8 +44,21 @@ export default function LoanAmortizationPage({ params }) {
         );
 
         const json = await res.json();
-        console.log(json.data);
+        // console.log(json.data);
         setData(json.data);
+
+        // Initialize paidPeriods from recurringPayment
+        const paid = {};
+        json.data?.recurringPayment.forEach((p) => {
+          if (p.status) {
+            paid[p.month] = {
+              txnNumber: p.txnNumber,
+              paymentDate: new Date(p.paymentDate),
+            };
+          }
+        });
+
+        setPaidPeriods(paid);
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
@@ -40,6 +67,13 @@ export default function LoanAmortizationPage({ params }) {
     };
     getData();
   }, [mySlag]);
+  const totalPayableAmount = data?.recurringPayment.reduce(
+    (sum, p) => sum + p.principal,
+    0
+  );
+  const remainingAmount = data?.recurringPayment
+    .filter((p) => !p.status) // only unpaid
+    .reduce((sum, p) => sum + p.recurring + p.fine, 0);
 
   const formatMoney = (n) =>
     n == null
@@ -51,14 +85,14 @@ export default function LoanAmortizationPage({ params }) {
 
   const formatDate = (isoDate) => {
     if (!isoDate) return "-";
+
     const d = new Date(isoDate);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(
-      2,
-      "0"
-    )}:${String(d.getMinutes()).padStart(2, "0")}`;
+
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+
+    return `${day}-${month}-${year}`;
   };
 
   const handlePrint = () => window.print();
@@ -77,18 +111,22 @@ export default function LoanAmortizationPage({ params }) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-red-500 text-lg">
+          <div
+            className="bg-blue-600 text-white w-14 px-2 rounded cursor-pointer"
+            onClick={() => router.back()}
+          >
+            Back
+          </div>
           No amortization data found for this customer.
         </p>
       </div>
     );
   }
   // Paynow button functioning
-  const handlePayNow = async (period, event) => {
-    // event.preventDefault();
-
+  const handlePayNow = async (period, event, amount) => {
+    event.preventDefault();
+    const txnNumber = `TXN_${Date.now()}`;
     try {
-      const txnNumber = `TXN_${Date.now()}`; // simple txn number
-
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_HOST}/api/recurring/pay`,
         {
@@ -99,17 +137,22 @@ export default function LoanAmortizationPage({ params }) {
           },
           body: JSON.stringify({
             id: mySlag,
-            recurringNumber: row.period,
-            txnNumber: `TXN_${Date.now()}`,
-            amount: row.payment,
+            recurringNumber: Number(period),
+            txnNumber: txnNumber,
+            amount: amount,
           }),
         }
       );
 
       const json = await res.json();
-
+      if (json.success === true) {
+        toast.success(json.message, toastOptions);
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+      }
       if (!json.success) {
-        alert(json.message || "Payment failed");
+        toast.info(json.message, toastOptions);
         return;
       }
 
@@ -117,10 +160,51 @@ export default function LoanAmortizationPage({ params }) {
       setPaidPeriods((prev) => ({
         ...prev,
         [period]: {
-          txnNumber,
+          txnNumber, // txnNumber is not defined at here
           paymentDate: new Date(),
         },
       }));
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
+  const handleMarkUnpaid = async (period, event) => {
+    event.preventDefault();
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/recurring/unpay`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "admin-token": localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            id: mySlag,
+            recurringNumber: period,
+          }),
+        }
+      );
+
+      const json = await res.json();
+      if (json.success === true) {
+        toast.success(json.message, toastOptions);
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+      }
+      if (!json.success) {
+        alert(json.message);
+        return;
+      }
+
+      // ✅ Update UI
+      setPaidPeriods((prev) => {
+        const updated = { ...prev };
+        delete updated[period];
+        return updated;
+      });
     } catch (err) {
       console.error(err);
       alert("Something went wrong");
@@ -188,27 +272,21 @@ export default function LoanAmortizationPage({ params }) {
                   value={`${data.interestPercentage}%`}
                 />
                 <SummaryBox
-                  title="Total Payable Amount"
-                  value={`₹ ${formatMoney(
-                    data.frequency === 3
-                      ? data.amount * 30 * data.repaymentPeriod
-                      : data.frequency === 2
-                      ? data.amount * 7 * data.repaymentPeriod
-                      : data.frequency === 1
-                      ? data.amount * 1 * data.repaymentPeriod
-                      : ""
-                  )}`}
+                  title="Total Payable"
+                  value={`₹ ${formatMoney(totalPayableAmount)}`}
                 />
                 <SummaryBox
-                  title="Remaining Payable Amount"
+                  title="Remaining Payable"
+                  value={`₹ ${formatMoney(remainingAmount)}`}
+                />
+                <SummaryBox
+                  title="Due Date"
+                  value={formatDate(data.nextPaymentDate)}
+                />
+                <SummaryBox
+                  title="Total Paid"
                   value={`₹ ${formatMoney(
-                    data.frequency === 3
-                      ? data.amount * 30 * data.repaymentPeriod
-                      : data.frequency === 2
-                      ? data.amount * 7 * data.repaymentPeriod
-                      : data.frequency === 1
-                      ? data.amount * 1 * data.repaymentPeriod
-                      : ""
+                    totalPayableAmount - remainingAmount
                   )}`}
                 />
               </section>
@@ -263,14 +341,19 @@ export default function LoanAmortizationPage({ params }) {
                           </td>
                           <td className="px-4 py-2 text-sm text-slate-700">
                             {paidPeriods[row.period] ? (
-                              <span className="bg-green-600 text-white py-1 px-3 rounded text-sm">
+                              <button
+                                className="bg-green-600 text-white py-1 px-3 rounded text-sm"
+                                onClick={(event) =>
+                                  handleMarkUnpaid(row.period, event)
+                                }
+                              >
                                 Paid
-                              </span>
+                              </button>
                             ) : (
                               <button
                                 className="bg-red-700 text-white py-1 px-2 rounded hover:bg-blue-600"
                                 onClick={(event) =>
-                                  handlePayNow(row.period, event)
+                                  handlePayNow(row.period, event, row.payment)
                                 }
                               >
                                 Pay Now

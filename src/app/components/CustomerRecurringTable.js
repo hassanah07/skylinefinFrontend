@@ -177,9 +177,9 @@ const CustomerRecurringTable = ({ customerRecurringData = [], mySlag }) => {
                 <th className="py-2 px-3">Frequency</th>
                 <th className="py-2 px-3">Calc</th>
                 <th className="py-2 px-3">Amortization</th>
-                <th className="py-2 px-3">Agreement</th>
+                {/* <th className="py-2 px-3">Agreement</th>
                 <th className="py-2 px-3">Delete</th>
-                <th className="py-2 px-3">Actions</th>
+                <th className="py-2 px-3">Actions</th> */}
               </tr>
             </thead>
             <tbody>
@@ -226,7 +226,7 @@ const CustomerRecurringTable = ({ customerRecurringData = [], mySlag }) => {
                           />
                         </Link>
                       </td>
-                      <td className="py-3 px-3">
+                      {/* <td className="py-3 px-3">
                         <Link
                           href={`#`}
                           className="text-sm hover:text-amber-500 hover:cursor-pointer hover:underline"
@@ -277,7 +277,7 @@ const CustomerRecurringTable = ({ customerRecurringData = [], mySlag }) => {
                             </Link>
                           )}
                         </div>
-                      </td>
+                      </td> */}
                     </tr>
                   );
                 })
