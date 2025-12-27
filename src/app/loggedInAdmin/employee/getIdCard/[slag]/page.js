@@ -109,7 +109,7 @@ export default function EmployeeIDCard({ params }) {
                   {/* Header */}
                   <div className="flex items-center gap-3 border-b pb-2">
                     <Image
-                      src="/logo.png"
+                      src="/Logo.PNG"
                       alt="Company Logo"
                       width={50}
                       height={50}

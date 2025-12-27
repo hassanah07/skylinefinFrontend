@@ -100,7 +100,7 @@ export default function DealerCertificate({ params }) {
                 <div className="flex items-center justify-between border-b pb-4">
                   <div className="flex items-center gap-3">
                     <Image
-                      src="/logo.png"
+                      src="/Logo.PNG"
                       alt="Company Logo"
                       width={70}
                       height={70}
